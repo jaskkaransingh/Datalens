@@ -1,0 +1,21 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+Backend/venv/
+
+# Environment variables
+.env
+Backend/.env
+
+# Vector database
+vector_store/
+Backend/vector_store/
+
+# OS junk
+.DS_Store
+Thumbs.db
