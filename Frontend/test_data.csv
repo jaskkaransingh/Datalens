@@ -1,0 +1,11 @@
+ID,Employee_Name,Age,Department,Salary,Performance_Score
+1,Alice Johnson,28,Engineering,72000,94.2
+2,Bob Smith,34,Marketing,,78.5
+3,Carol White,,HR,65000,88.1
+4,David Lee,41,Engineering,91000,
+5,Eva Martinez,29,Sales,58000,71.3
+6,Frank Brown,38,Finance,-500,85.7
+7,,25,Marketing,48000,66.4
+8,Hannah Clark,32,Engineering,77000,91.8
+9,Ivan Rodriguez,44,Management,105000,96.3
+10,Julia Kim,27,Sales,54000,73.9
