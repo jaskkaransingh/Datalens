@@ -2,7 +2,7 @@
 
 DataLens is a professional, schema-agnostic data engineering and predictive visualization suite. It allows you to ingest any CSV dataset, interactively heal missing fragments, suppress anomalies, run Scikit-Learn linear regression forecasts, and extract high-fidelity production workbooks (Master Excel, CSV, JSON).
 
-## Zero-Knowledge Setup & Execution (Windows)
+##Setup & Execution (Windows)
 
 We have created an automated initialization protocol that handles everything—from installing background mathematical libraries to booting up the visual interface.
 
