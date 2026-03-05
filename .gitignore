@@ -36,12 +36,16 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+*.pyc
+*.pyo
+*.pyd
 
 # Virtual environments
 venv/
 ENV/
 env.bak/
 venv.bak/
+Backend/venv/
 
 # Editor directories and files
 .vscode/*
@@ -53,3 +57,15 @@ venv.bak/
 *.njsproj
 *.sln
 *.sw?
+
+# Environment variables
+.env
+Backend/.env
+
+# Vector database
+vector_store/
+Backend/vector_store/
+
+# OS junk
+Thumbs.db
+
