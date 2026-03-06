@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 # Import routers
-from routes import upload, profile, clean, export, visualize,history
+from routes import upload, profile, clean, export, visualize, history, modify
 
 app = FastAPI(
     title="DATALENS Backend",
@@ -23,3 +23,4 @@ app.include_router(upload.router, prefix="/api", tags=["Upload"])
 app.include_router(profile.router, prefix="/api", tags=["Profile"])
 app.include_router(clean.router, prefix="/api", tags=["Cleaning"])
 app.include_router(history.router, prefix="/api", tags=["History"])
+app.include_router(modify.router, prefix="/api", tags=["Modify"])

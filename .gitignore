@@ -1,55 +1,55 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-# Node
+# Dependency directories
 node_modules/
 Frontend/node_modules/
-dist
-dist-ssr
-*.local
+Backend/env/
+Backend/venv/
+venv/
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# Python
+# Build outputs
+dist/
+dist-ssr/
+build/
+*.egg-info/
+.eggs/
+
+# Python caching and bytecode
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-env/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
 
-# Virtual environments
-venv/
-ENV/
-env.bak/
-venv.bak/
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+logs/
 
-# Editor directories and files
-.vscode/*
+# Editor and OS-specific files
+.vscode/
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
+Thumbs.db
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# Data files (optional, keeping CSV/JSON if they are templates/examples)
+# *.csv
+# *.json
+# !package.json
+# !package-lock.json
+
+# Tool specific
+.installed.cfg
+pip-wheel-metadata/

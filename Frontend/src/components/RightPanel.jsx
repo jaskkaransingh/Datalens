@@ -44,14 +44,14 @@ export default function RightPanel({ stats, dataset = [] }) {
                     display: 'flex',
                     alignItems: 'center',
                     gap: 12,
-                    background: 'var(--alice-blue)',
+                    background: 'rgba(66,71,105,0.70)',
                     padding: '12px 16px',
                     borderRadius: 12,
-                    border: '1px solid var(--sand-dune)'
+                    border: '1px solid rgba(249,177,122,0.35)'
                 }}>
                     <div style={{ width: 8, height: 8, background: '#10b981', borderRadius: '50%', boxShadow: '0 0 12px #10b981' }} />
-                    <div style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--ink-black)' }}>System Python API</div>
-                    <div style={{ marginLeft: 'auto', fontSize: '0.6rem', fontWeight: 800, color: 'var(--cerulean)' }}>STABLE</div>
+                    <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#ffffff' }}>System Python API</div>
+                    <div style={{ marginLeft: 'auto', fontSize: '0.6rem', fontWeight: 800, color: '#f9b17a' }}>STABLE</div>
                 </div>
             </div>
 
@@ -63,15 +63,15 @@ export default function RightPanel({ stats, dataset = [] }) {
                     <div className="space-y-4">
                         <div className="health-bar-row">
                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', fontWeight: 700, marginBottom: 8 }}>
-                                <span style={{ color: 'var(--text-muted)' }}>INTEGRITY INDEX</span>
-                                <span style={{ color: 'var(--cerulean)' }}>{stats.clean_avg}%</span>
+                                <span style={{ color: 'rgba(103,111,157,0.9)' }}>INTEGRITY INDEX</span>
+                                <span style={{ color: '#f9b17a' }}>{stats.clean_avg}%</span>
                             </div>
                             <div className="health-bar-container">
                                 <div className="health-bar-fill" style={{ width: `${stats.clean_avg}%` }} />
                             </div>
                         </div>
                     </div>
-                ) : <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontStyle: 'italic', padding: 12, background: 'var(--alice-blue)', borderRadius: 10, textAlign: 'center' }}>No analysis initialized</div>}
+                ) : <div style={{ fontSize: '0.75rem', color: 'rgba(103,111,157,0.9)', fontStyle: 'italic', padding: 12, background: 'rgba(66,71,105,0.60)', borderRadius: 10, textAlign: 'center' }}>No analysis initialized</div>}
             </div>
 
             <div className="sidebar-divider" style={{ margin: '0.5rem 0' }} />
@@ -79,10 +79,10 @@ export default function RightPanel({ stats, dataset = [] }) {
             <div className="rp-section" style={{ flex: 1 }}>
                 <div className="panel-section-title">System Status Monitor</div>
                 <div style={{
-                    background: 'var(--alice-blue)',
+                    background: 'rgba(66,71,105,0.70)',
                     borderRadius: 12,
                     padding: '1.5rem',
-                    border: '1px solid var(--sand-dune)',
+                    border: '1px solid rgba(249,177,122,0.25)',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -90,10 +90,10 @@ export default function RightPanel({ stats, dataset = [] }) {
                     gap: '1rem',
                     textAlign: 'center'
                 }}>
-                    <ShieldCheck size={32} color="var(--cerulean)" />
+                    <ShieldCheck size={32} color="#f9b17a" />
                     <div>
-                        <div style={{ fontSize: '0.85rem', fontWeight: 850, color: 'var(--ink-black)' }}>Guardian Core Active</div>
-                        <div style={{ fontSize: '0.65rem', fontWeight: 600, color: 'var(--text-muted)', marginTop: 4 }}>REAL-TIME ANOMALY MONITORING ENABLED</div>
+                        <div style={{ fontSize: '0.85rem', fontWeight: 850, color: '#ffffff' }}>Guardian Core Active</div>
+                        <div style={{ fontSize: '0.65rem', fontWeight: 600, color: 'rgba(103,111,157,0.9)', marginTop: 4 }}>REAL-TIME ANOMALY MONITORING ENABLED</div>
                     </div>
                 </div>
             </div>

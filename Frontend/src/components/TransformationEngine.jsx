@@ -38,8 +38,8 @@ export default function TransformationEngine({ columns = [], onUpdate }) {
         <div className="card animate-fadeInUp">
             <div className="card-header">
                 <div className="card-title">
-                    <div style={{ background: 'rgba(34, 116, 165, 0.1)', padding: 10, borderRadius: 12 }}>
-                        <Settings2 size={18} color="var(--cerulean)" />
+                    <div style={{ background: 'rgba(249,177,122,0.12)', padding: 10, borderRadius: 12 }}>
+                        <Settings2 size={18} color="#f9b17a" />
                     </div>
                     <div>
                         <div>Strategic Transformation Engine</div>
@@ -58,29 +58,29 @@ export default function TransformationEngine({ columns = [], onUpdate }) {
                             className={`insight-metric ${action === a.id ? 'active' : ''}`}
                             style={{
                                 cursor: 'pointer',
-                                border: action === a.id ? '2px solid var(--cerulean)' : '1px solid var(--sand-dune)',
-                                background: action === a.id ? 'var(--alice-blue)' : 'white',
+                                border: action === a.id ? '2px solid #f9b17a' : '1px solid rgba(103,111,157,0.3)',
+                                background: action === a.id ? 'rgba(249,177,122,0.12)' : 'rgba(66,71,105,0.60)',
                                 padding: '1.25rem'
                             }}
                         >
                             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
-                                <a.icon size={16} color={action === a.id ? 'var(--cerulean)' : 'var(--text-muted)'} />
-                                <span style={{ fontWeight: 800, fontSize: '0.85rem', color: 'var(--ink-black)' }}>{a.label}</span>
+                                <a.icon size={16} color={action === a.id ? '#f9b17a' : '#676f9d'} />
+                                <span style={{ fontWeight: 800, fontSize: '0.85rem', color: '#ffffff' }}>{a.label}</span>
                             </div>
-                            <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: 600 }}>{a.desc}</div>
+                            <div style={{ fontSize: '0.65rem', color: '#676f9d', fontWeight: 600 }}>{a.desc}</div>
                         </div>
                     ))}
                 </div>
 
                 {/* Configuration Panel */}
-                <div className="insight-metric" style={{ background: 'var(--alice-blue)', padding: '2rem', borderRadius: 24, position: 'relative' }}>
+                <div className="insight-metric" style={{ background: 'rgba(66,71,105,0.80)', padding: '2rem', borderRadius: 24, position: 'relative' }}>
                     <div className="space-y-6">
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                             <label style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Target Dimension</label>
                             <select
                                 value={selectedCol}
                                 onChange={(e) => setSelectedCol(e.target.value)}
-                                style={{ width: '100%', padding: '14px', borderRadius: 12, border: '1px solid var(--sand-dune)', background: 'white', fontWeight: 700, outline: 'none' }}
+                                style={{ width: '100%', padding: '14px', borderRadius: 12, border: '1px solid rgba(103,111,157,0.35)', background: '#2d3250', color: '#ffffff', fontWeight: 700, outline: 'none' }}
                             >
                                 {columns.map(c => <option key={c} value={c}>{c}</option>)}
                             </select>
@@ -118,10 +118,10 @@ export default function TransformationEngine({ columns = [], onUpdate }) {
                     </div>
 
                     {loading && (
-                        <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(2px)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 24 }}>
+                        <div style={{ position: 'absolute', inset: 0, background: 'rgba(45,50,80,0.75)', backdropFilter: 'blur(2px)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 24 }}>
                             <div style={{ textAlign: 'center' }}>
-                                <RefreshCw className="animate-spin" size={32} color="var(--cerulean)" />
-                                <div style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--cerulean)', marginTop: 12 }}>REFINING CORE LOGIC...</div>
+                                <RefreshCw className="animate-spin" size={32} color="#f9b17a" />
+                                <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#f9b17a', marginTop: 12 }}>REFINING CORE LOGIC...</div>
                             </div>
                         </div>
                     )}

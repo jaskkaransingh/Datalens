@@ -16,14 +16,16 @@ const OPT = {
         legend: {
             position: 'bottom',
             labels: {
-                color: '#131B23',
+                color: '#ffffff',
                 font: { family: 'Inter', size: 10, weight: '700' },
                 usePointStyle: true,
                 padding: 20
             }
         },
         tooltip: {
-            backgroundColor: '#131B23',
+            backgroundColor: '#2d3250',
+            titleColor: '#ffffff',
+            bodyColor: '#f9b17a',
             padding: 12,
             cornerRadius: 12,
             titleFont: { family: 'Outfit', size: 14, weight: 'bold' },
@@ -34,12 +36,12 @@ const OPT = {
     scales: {
         x: {
             grid: { display: false },
-            ticks: { color: '#64748b', font: { size: 11, weight: '600' } },
+            ticks: { color: '#676f9d', font: { size: 11, weight: '600' } },
             border: { display: false }
         },
         y: {
-            grid: { color: 'rgba(231, 223, 198, 0.2)' },
-            ticks: { color: '#64748b', font: { size: 11, weight: '600' } },
+            grid: { color: 'rgba(103, 111, 157, 0.2)' },
+            ticks: { color: '#676f9d', font: { size: 11, weight: '600' } },
             border: { display: false }
         },
     },
@@ -69,11 +71,11 @@ export default function VisualizationStudio({ chartType = 'bar', columns = [] })
             if (result.error) throw new Error(result.error);
 
             const backgroundColors = [
-                'rgba(34, 116, 165, 0.8)',
-                'rgba(231, 223, 198, 0.8)',
-                'rgba(19, 27, 35, 0.8)',
-                '#4dabf7',
-                '#dbd0ae',
+                'rgba(249, 177, 122, 0.85)',
+                'rgba(103, 111, 157, 0.85)',
+                'rgba(66, 71, 105, 0.85)',
+                '#f9b17a',
+                '#676f9d',
             ];
 
             setData({
@@ -81,14 +83,14 @@ export default function VisualizationStudio({ chartType = 'bar', columns = [] })
                 datasets: [{
                     label: `${result.val_col}`,
                     data: result.values,
-                    backgroundColor: chartType === 'pie' || chartType === 'doughnut' ? backgroundColors : 'rgba(34, 116, 165, 0.8)',
-                    borderColor: '#2274A5',
+                    backgroundColor: chartType === 'pie' || chartType === 'doughnut' ? backgroundColors : 'rgba(249, 177, 122, 0.80)',
+                    borderColor: '#f9b17a',
                     borderWidth: chartType === 'bar' ? 0 : 2,
                     borderRadius: chartType === 'bar' ? 8 : 0,
                     tension: 0.4,
                     fill: true,
-                    pointBackgroundColor: '#fff',
-                    pointBorderColor: '#2274A5',
+                    pointBackgroundColor: '#ffffff',
+                    pointBorderColor: '#f9b17a',
                     pointHoverRadius: 6,
                 }]
             });
@@ -126,7 +128,7 @@ export default function VisualizationStudio({ chartType = 'bar', columns = [] })
         <div className="card animate-fadeInUp">
             <div className="card-header">
                 <div className="card-title">
-                    <div style={{ background: 'rgba(34, 116, 165, 0.1)', padding: 10, borderRadius: 12 }}>
+                    <div style={{ background: 'rgba(249,177,122,0.12)', padding: 10, borderRadius: 12 }}>
                         <BarChart2 size={18} color="var(--cerulean)" />
                     </div>
                     <div>
@@ -137,35 +139,35 @@ export default function VisualizationStudio({ chartType = 'bar', columns = [] })
 
                 <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
                     {/* Axis Selectors */}
-                    <div style={{ display: 'flex', background: 'var(--alice-blue)', padding: '4px 12px', borderRadius: 10, border: '1px solid var(--sand-dune)', gap: 8, alignItems: 'center' }}>
-                        <span style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-muted)' }}>MAPPING:</span>
+                    <div style={{ display: 'flex', background: 'rgba(66,71,105,0.70)', padding: '4px 12px', borderRadius: 10, border: '1px solid rgba(249,177,122,0.3)', gap: 8, alignItems: 'center' }}>
+                        <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#676f9d' }}>MAPPING:</span>
                         <select
                             value={xAxis}
                             onChange={(e) => setXAxis(e.target.value)}
-                            style={{ background: 'transparent', border: 'none', fontSize: '0.75rem', fontWeight: 700, color: 'var(--cerulean)', outline: 'none', cursor: 'pointer' }}
+                            style={{ background: 'transparent', border: 'none', fontSize: '0.75rem', fontWeight: 700, color: '#f9b17a', outline: 'none', cursor: 'pointer' }}
                         >
                             {columns.map(c => <option key={c} value={c}>X: {c}</option>)}
                         </select>
-                        <div style={{ width: 1, height: 16, background: 'var(--sand-dune)' }} />
+                        <div style={{ width: 1, height: 16, background: 'rgba(249,177,122,0.4)' }} />
                         <select
                             value={yAxis}
                             onChange={(e) => setYAxis(e.target.value)}
-                            style={{ background: 'transparent', border: 'none', fontSize: '0.75rem', fontWeight: 700, color: 'var(--ink-black)', outline: 'none', cursor: 'pointer' }}
+                            style={{ background: 'transparent', border: 'none', fontSize: '0.75rem', fontWeight: 700, color: '#ffffff', outline: 'none', cursor: 'pointer' }}
                         >
                             {columns.map(c => <option key={c} value={c}>Y: {c}</option>)}
                         </select>
                     </div>
 
-                    <button onClick={fetchData} className="btn-icon" style={{ background: 'white', border: '1px solid var(--sand-dune)', padding: 10, borderRadius: 12, cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-                        <RefreshCw size={14} color="var(--cerulean)" className={loading ? 'animate-spin' : ''} />
+                    <button onClick={fetchData} className="btn-icon" style={{ background: 'rgba(103,111,157,0.20)', border: '1px solid rgba(249,177,122,0.3)', padding: 10, borderRadius: 12, cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+                        <RefreshCw size={14} color="#f9b17a" className={loading ? 'animate-spin' : ''} />
                     </button>
                 </div>
             </div>
 
             <div className="chart-container" style={{ height: 380, position: 'relative', padding: '20px 0' }}>
                 {loading && (
-                    <div style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(4px)', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 12 }}>
-                        <RefreshCw className="animate-spin" size={32} color="var(--cerulean)" />
+                    <div style={{ position: 'absolute', inset: 0, background: 'rgba(45,50,80,0.75)', backdropFilter: 'blur(4px)', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 12 }}>
+                        <RefreshCw className="animate-spin" size={32} color="#f9b17a" />
                     </div>
                 )}
                 {renderChart()}

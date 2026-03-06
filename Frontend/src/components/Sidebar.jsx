@@ -36,7 +36,7 @@ export default function Sidebar({
                 <div className="sidebar-badge">Industrial Logic</div>
             </div>
 
-            <div className="sidebar-divider" style={{ background: 'rgba(231, 223, 198, 0.1)', margin: '1rem 0 2rem 0' }} />
+            <div className="sidebar-divider" style={{ background: 'rgba(103, 111, 157, 0.2)', margin: '1rem 0 2rem 0' }} />
 
             {/* Navigation */}
             <div className="sidebar-section">
@@ -59,13 +59,13 @@ export default function Sidebar({
             {/* Display Mode - Segmented Control */}
             <div className="sidebar-section">
                 <div className="sidebar-section-title">Analytical Perspective</div>
-                <div className="segmented-control mt-2" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(231, 223, 198, 0.1)' }}>
+                <div className="segmented-control mt-2" style={{ background: 'rgba(45,50,80,0.60)', border: '1px solid rgba(103, 111, 157, 0.25)' }}>
                     {['chart', 'both'].map(m => (
                         <button
                             key={m}
                             className={`segment-btn ${displayMode === m ? 'active' : ''}`}
                             onClick={() => onDisplayModeChange(m)}
-                            style={{ color: displayMode === m ? 'var(--cerulean)' : 'rgba(233, 241, 247, 0.4)' }}
+                            style={{ color: displayMode === m ? '#f9b17a' : 'rgba(103, 111, 157, 0.8)' }}
                         >
                             {m === 'both' ? 'Unified' : m.toUpperCase()}
                         </button>
@@ -102,15 +102,15 @@ export default function Sidebar({
                         <label key={col} className="col-check-item" style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', padding: '6px 0', opacity: visibleCols[col] ? 1 : 0.4 }}>
                             <input
                                 type="checkbox"
-                                style={{ accentColor: 'var(--cerulean)', width: 14, height: 14 }}
+                                style={{ accentColor: '#f9b17a', width: 14, height: 14 }}
                                 checked={!!visibleCols[col]}
                                 onChange={() => onToggleColumn(col)}
                             />
-                            <span style={{ fontSize: '0.75rem', fontWeight: 500, color: 'var(--text-on-dark)' }}>{col}</span>
+                            <span style={{ fontSize: '0.75rem', fontWeight: 500, color: '#ffffff' }}>{col}</span>
                         </label>
                     )) : (
-                        <div style={{ padding: '20px 10px', textAlign: 'center', border: '1px dashed rgba(231,223,198,0.2)', borderRadius: 12 }}>
-                            <span style={{ fontSize: '0.65rem', color: 'rgba(233,241,247,0.4)' }}>Awaiting Dataset</span>
+                        <div style={{ padding: '20px 10px', textAlign: 'center', border: '1px dashed rgba(103,111,157,0.3)', borderRadius: 12 }}>
+                            <span style={{ fontSize: '0.65rem', color: 'rgba(103,111,157,0.7)' }}>Awaiting Dataset</span>
                         </div>
                     )}
                 </div>

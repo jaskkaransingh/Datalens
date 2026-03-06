@@ -14,8 +14,8 @@ export default function DataDescription({ stats }) {
         <div className="card animate-fadeInUp">
             <div className="card-header">
                 <div className="card-title">
-                    <div style={{ background: 'rgba(34, 116, 165, 0.1)', padding: 10, borderRadius: 12 }}>
-                        <Info size={18} color="var(--cerulean)" />
+                    <div style={{ background: 'rgba(249, 177, 122, 0.12)', padding: 10, borderRadius: 12 }}>
+                        <Info size={18} color="#f9b17a" />
                     </div>
                     <div>
                         <div>Operational Summary</div>

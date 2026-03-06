@@ -26,8 +26,8 @@ export default function DeepAnalysis({ healthData = {}, deepStats = {}, visibleC
             <div className="card animate-fadeInUp">
                 <div className="card-header">
                     <div className="card-title">
-                        <div style={{ background: 'rgba(34, 116, 165, 0.1)', padding: 10, borderRadius: 12 }}>
-                            <TrendingUp size={18} color="var(--cerulean)" />
+                        <div style={{ background: 'rgba(249, 177, 122, 0.12)', padding: 10, borderRadius: 12 }}>
+                            <TrendingUp size={18} color="#f9b17a" />
                         </div>
                         <div>
                             <div>Feature Correlation Intelligence</div>
@@ -59,8 +59,8 @@ export default function DeepAnalysis({ healthData = {}, deepStats = {}, visibleC
                                             return (
                                                 <td key={col} style={{
                                                     textAlign: 'center',
-                                                    background: val > 0 ? `rgba(34, 116, 165, ${absVal * 0.6})` : `rgba(231, 223, 198, ${absVal * 0.6})`,
-                                                    color: absVal > 0.4 ? (val > 0 ? 'white' : 'var(--ink-black)') : 'var(--text-muted)',
+                                                    background: val > 0 ? `rgba(249, 177, 122, ${absVal * 0.7})` : `rgba(103, 111, 157, ${absVal * 0.7})`,
+                                                    color: absVal > 0.4 ? (val > 0 ? '#2d3250' : '#ffffff') : '#ffffff',
                                                     fontSize: '0.8rem',
                                                     fontWeight: 700,
                                                     border: '1px solid rgba(255,255,255,0.05)'
@@ -85,8 +85,8 @@ export default function DeepAnalysis({ healthData = {}, deepStats = {}, visibleC
                         <div key={col} className="card insight-card animate-fadeInUp">
                             <div className="card-header">
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                                    <div style={{ width: 36, height: 36, borderRadius: 12, background: 'var(--alice-blue)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid var(--sand-dune)' }}>
-                                        <Hash size={16} color="var(--cerulean)" />
+                                    <div style={{ width: 36, height: 36, borderRadius: 12, background: 'rgba(103, 111, 157, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(103, 111, 157, 0.25)' }}>
+                                        <Hash size={16} color="#f9b17a" />
                                     </div>
                                     <span style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--ink-black)' }}>{col}</span>
                                 </div>
