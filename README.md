@@ -39,7 +39,7 @@ To run DataLens locally, you need to start the Backend and Frontend servers simu
 cd Backend
 
 # Install dependencies
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 
 # Start the server
 python main.py
