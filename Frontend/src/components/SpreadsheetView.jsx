@@ -112,48 +112,50 @@ export default function SpreadsheetView({ data = [], columns = [], visibleCols =
 
 
     return (
-        <div className="card animate-fadeInUp" style={{ padding: '24px', border: '1px solid rgba(103,111,157,0.15)', background: 'rgba(28, 37, 65, 0.4)', boxShadow: 'var(--shadow-glass)' }}>
-            <div className="card-header">
-                <div className="card-title">
-                    <div style={{ background: 'rgba(249,177,122,0.1)', padding: 12, borderRadius: '14px', border: '1px solid rgba(249,177,122,0.2)' }}>
-                        <FileSpreadsheet size={20} color="#f9b17a" />
-                    </div>
-                    <div>
-                        <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.5px' }}>Visual Workspace</div>
-                        <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: '2px' }}>
-                            {data.length} records · {displayCols.length} active features
+        <div className="card animate-fadeInUp" style={{ padding: '24px', border: '1px solid rgba(103,111,157,0.15)', background: 'transparent', boxShadow: 'none' }}>
+            <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div className="card-title" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div style={{ background: 'rgba(249,177,122,0.1)', padding: 12, borderRadius: '14px', border: '1px solid rgba(249,177,122,0.2)' }}>
+                            <FileSpreadsheet size={20} color="#f9b17a" />
+                        </div>
+                        <div>
+                            <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.5px' }}>Excel View</div>
+                            <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: '2px' }}>
+                                {data.length} records · {displayCols.length} active features
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                    <Search size={16} style={{ position: 'absolute', left: 14, color: '#f9b17a', opacity: 0.8 }} />
-                    <input
-                        style={{
-                            width: 280,
-                            padding: '12px 14px 12px 42px',
-                            borderRadius: '12px',
-                            border: '1px solid rgba(103,111,157,0.2)',
-                            background: 'rgba(11, 19, 43, 0.6)',
-                            fontSize: '0.9rem',
-                            fontWeight: 500,
-                            color: '#ffffff',
-                            outline: 'none',
-                            boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.2)',
-                            transition: 'all 0.3s'
-                        }}
-                        onFocus={e => {
-                            e.target.style.borderColor = '#f9b17a';
-                            e.target.style.boxShadow = '0 0 0 3px rgba(249, 177, 122, 0.1), inset 0 2px 8px rgba(0,0,0,0.2)';
-                        }}
-                        onBlur={e => {
-                            e.target.style.borderColor = 'rgba(103,111,157,0.2)';
-                            e.target.style.boxShadow = 'inset 0 2px 8px rgba(0,0,0,0.2)';
-                        }}
-                        placeholder="Search workspace..."
-                        value={search}
-                        onChange={e => setSearch(e.target.value)}
-                    />
+                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                        <Search size={16} style={{ position: 'absolute', left: 14, color: '#f9b17a', opacity: 0.8 }} />
+                        <input
+                            style={{
+                                width: 280,
+                                padding: '12px 14px 12px 42px',
+                                borderRadius: '12px',
+                                border: '1px solid rgba(103,111,157,0.2)',
+                                background: 'rgba(11, 19, 43, 0.6)',
+                                fontSize: '0.9rem',
+                                fontWeight: 500,
+                                color: '#ffffff',
+                                outline: 'none',
+                                boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.2)',
+                                transition: 'all 0.3s'
+                            }}
+                            onFocus={e => {
+                                e.target.style.borderColor = '#f9b17a';
+                                e.target.style.boxShadow = '0 0 0 3px rgba(249, 177, 122, 0.1), inset 0 2px 8px rgba(0,0,0,0.2)';
+                            }}
+                            onBlur={e => {
+                                e.target.style.borderColor = 'rgba(103,111,157,0.2)';
+                                e.target.style.boxShadow = 'inset 0 2px 8px rgba(0,0,0,0.2)';
+                            }}
+                            placeholder="Search workspace..."
+                            value={search}
+                            onChange={e => setSearch(e.target.value)}
+                        />
+                    </div>
                 </div>
             </div>
 

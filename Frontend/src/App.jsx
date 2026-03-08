@@ -346,10 +346,10 @@ export default function App() {
             </div>
 
             {/* MAIN CENTER AREA - EXCEL & BUTTONS */}
-            <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(28, 37, 65, 0.4)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', border: '1px solid rgba(103,111,157,0.15)', borderRadius: '20px', position: 'relative', overflow: 'hidden', boxShadow: 'var(--shadow-glass)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'transparent', backdropFilter: 'blur(5px)', WebkitBackdropFilter: 'blur(5px)', border: '1px solid rgba(103,111,157,0.15)', borderRadius: '20px', position: 'relative', overflow: 'hidden', boxShadow: 'var(--shadow-glass)' }}>
 
                 {/* Top Bar: Tabs + Horizontal Editing Panel */}
-                <div style={{ display: 'flex', padding: '16px 32px', gap: '24px', borderBottom: '1px solid rgba(103,111,157,0.15)', background: 'rgba(28, 37, 65, 0.4)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', alignItems: 'center' }}>
+                <div style={{ display: 'flex', padding: '16px 32px', gap: '24px', borderBottom: '1px solid rgba(103,111,157,0.15)', background: 'transparent', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', alignItems: 'center' }}>
                     {/* Tabs */}
                     <div style={{ display: 'flex', gap: '12px' }}>
                         {['Clean', 'Validate', 'Visualize'].map(tab => (

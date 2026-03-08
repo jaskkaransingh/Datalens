@@ -341,7 +341,7 @@ h3,
     border: 1px solid rgba(103, 111, 157, 0.2);
     border-radius: 14px;
     overflow: auto;
-    background: rgba(28, 37, 65, 0.85);
+    background: transparent;
     box-shadow: var(--shadow-premium);
 }
 
@@ -379,7 +379,7 @@ h3,
     font-size: 0.82rem;
     color: var(--color-white);
     font-weight: 500;
-    background: rgba(45, 50, 80, 0.92);
+    background: rgba(45, 50, 80, 0.1);
     transition: background 0.12s;
     letter-spacing: 0.01em;
 }
@@ -390,7 +390,7 @@ h3,
 
 /* alternating rows */
 .spreadsheet-table tbody tr:nth-child(even) td {
-    background: rgba(66, 71, 105, 0.50);
+    background: rgba(66, 71, 105, 0.05);
 }
 
 .spreadsheet-table tbody tr:hover td {
