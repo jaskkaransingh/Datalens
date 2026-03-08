@@ -200,12 +200,14 @@ export default function App() {
             height: '100vh',
             backgroundColor: 'transparent',
             fontFamily: 'Inter, sans-serif',
-            transition: 'grid-template-columns 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
+            transition: 'grid-template-columns 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+            padding: '12px',
+            gap: '12px'
         }}>
 
             {/* LEFT SIDEBAR - FILES & EXPORT */}
-            <div style={{ background: 'rgba(45, 50, 80, 0.88)', backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)', color: 'var(--color-white)', display: 'flex', flexDirection: 'column', borderRight: '1px solid rgba(103,111,157,0.3)', zIndex: 50, boxShadow: '4px 0 40px rgba(0,0,0,0.35)' }}>
-                <div style={{ padding: '24px', fontSize: '1.75rem', fontWeight: '900', borderBottom: '1px solid rgba(103,111,157,0.25)', letterSpacing: '-0.5px', fontFamily: 'Outfit', background: 'rgba(249,177,122,0.04)' }}>
+            <div style={{ background: 'rgba(28, 37, 65, 0.7)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', color: 'var(--color-white)', display: 'flex', flexDirection: 'column', border: '1px solid rgba(103,111,157,0.15)', borderRadius: '20px', zIndex: 50, boxShadow: 'var(--shadow-glass)' }}>
+                <div style={{ padding: '24px', fontSize: '1.75rem', fontWeight: '900', borderBottom: '1px solid rgba(103,111,157,0.15)', letterSpacing: '-0.5px', fontFamily: 'Outfit', background: 'rgba(249,177,122,0.02)' }}>
                     <span style={{ color: '#ffffff' }}>Data</span><span style={{ color: '#f9b17a', fontWeight: 600 }}>Lens</span>
                 </div>
 
@@ -236,12 +238,13 @@ export default function App() {
                                 background: activeFileName === file.name
                                     ? 'linear-gradient(135deg, #f9b17a 0%, #e8965a 100%)'
                                     : 'rgba(103,111,157,0.12)',
-                                borderRadius: '10px',
+                                borderRadius: '14px',
                                 cursor: 'pointer',
-                                color: activeFileName === file.name ? '#2d3250' : '#ffffff',
+                                color: activeFileName === file.name ? '#0B132B' : '#ffffff',
                                 fontWeight: '700',
-                                transition: 'all 0.3s',
-                                boxShadow: activeFileName === file.name ? '0 4px 14px rgba(249, 177, 122, 0.3)' : 'none'
+                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                boxShadow: activeFileName === file.name ? '0 10px 20px -5px rgba(249, 177, 122, 0.4)' : 'none',
+                                border: activeFileName === file.name ? '1px solid rgba(255,255,255,0.2)' : '1px solid transparent'
                             }}>
                             <FileText size={18} />
                             <span style={{ fontSize: '0.95rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -265,7 +268,7 @@ export default function App() {
 
                     <button
                         onClick={() => document.getElementById('csv-upload').click()}
-                        style={{ width: '100%', padding: '13px', border: '1px dashed rgba(103,111,157,0.4)', borderRadius: '10px', background: 'rgba(103,111,157,0.12)', color: '#f9b17a', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', marginTop: '16px', fontWeight: '800', transition: 'all 0.3s', fontSize: '0.85rem' }}>
+                        style={{ width: '100%', padding: '13px', border: '1px dashed rgba(249,177,122,0.3)', borderRadius: '12px', background: 'rgba(249,177,122,0.05)', color: '#f9b17a', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', marginTop: '16px', fontWeight: '800', transition: 'all 0.3s', fontSize: '0.85rem' }}>
                         {loading ? <RefreshCw className="animate-spin" size={18} /> : <Upload size={18} />}
                         {loading ? 'Processing...' : 'Add CSV'}
                     </button>
@@ -310,13 +313,13 @@ export default function App() {
                                     padding: '8px',
                                     borderRadius: '8px',
                                     background: 'linear-gradient(135deg, #f9b17a, #e8965a)',
-                                    color: '#2d3250',
+                                    color: '#0B132B',
                                     border: 'none',
                                     fontWeight: '800',
                                     fontSize: '0.7rem',
                                     cursor: 'pointer',
                                     transition: 'all 0.2s',
-                                    boxShadow: '0 6px 20px rgba(249,177,122,0.3)'
+                                    boxShadow: '0 8px 20px -5px rgba(249,177,122,0.4)'
                                 }}
                             >
                                 <Save size={14} /> SAVE
@@ -326,18 +329,18 @@ export default function App() {
                 )}
 
                 {/* Export Footer */}
-                <div style={{ padding: '24px', borderTop: '1px solid rgba(103,111,157,0.25)' }}>
-                    <button style={{ width: '100%', padding: '15px', background: 'linear-gradient(135deg, #f9b17a 0%, #e8965a 100%)', color: '#2d3250', borderRadius: '10px', border: 'none', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', fontWeight: '800', fontSize: '1rem', transition: 'all 0.3s', boxShadow: '0 6px 20px rgba(249,177,122,0.3)' }}>
+                <div style={{ padding: '24px', borderTop: '1px solid rgba(103,111,157,0.15)' }}>
+                    <button style={{ width: '100%', padding: '15px', background: 'linear-gradient(135deg, #f9b17a 0%, #e8965a 100%)', color: '#0B132B', borderRadius: '12px', border: 'none', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', fontWeight: '800', fontSize: '1rem', transition: 'all 0.3s', boxShadow: '0 10px 25px -5px rgba(249,177,122,0.4)' }}>
                         <Download size={20} /> Export
                     </button>
                 </div>
             </div>
 
             {/* MAIN CENTER AREA - EXCEL & BUTTONS */}
-            <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(45,50,80,0.60)', backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'rgba(28, 37, 65, 0.4)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', border: '1px solid rgba(103,111,157,0.15)', borderRadius: '20px', position: 'relative', overflow: 'hidden', boxShadow: 'var(--shadow-glass)' }}>
 
                 {/* Top Bar: Tabs + Horizontal Editing Panel */}
-                <div style={{ display: 'flex', padding: '14px 32px', gap: '24px', borderBottom: '1px solid rgba(103,111,157,0.25)', background: 'rgba(66,71,105,0.85)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', alignItems: 'center' }}>
+                <div style={{ display: 'flex', padding: '16px 32px', gap: '24px', borderBottom: '1px solid rgba(103,111,157,0.15)', background: 'rgba(28, 37, 65, 0.4)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', alignItems: 'center' }}>
                     {/* Tabs */}
                     <div style={{ display: 'flex', gap: '12px' }}>
                         {['Clean', 'Validate', 'Visualize'].map(tab => (
@@ -346,15 +349,15 @@ export default function App() {
                                 onClick={() => setActiveTab(tab)}
                                 style={{
                                     padding: '12px 24px',
-                                    backgroundColor: activeTab === tab ? '#2d3250' : '#f9b17a',
-                                    color: activeTab === tab ? '#f9b17a' : '#2d3250',
-                                    border: 'none',
+                                    backgroundColor: activeTab === tab ? '#0B132B' : '#f9b17a',
+                                    color: activeTab === tab ? '#f9b17a' : '#0B132B',
+                                    border: activeTab === tab ? '1px solid rgba(249,177,122,0.3)' : 'none',
                                     borderRadius: '12px',
                                     cursor: 'pointer',
                                     fontWeight: '800',
-                                    fontSize: '0.95rem',
-                                    transition: 'all 0.3s cubic-bezier(0.23, 1, 0.32, 1)',
-                                    boxShadow: '0 4px 16px rgba(0,0,0,0.3)'
+                                    fontSize: '0.9rem',
+                                    transition: 'all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)',
+                                    boxShadow: activeTab === tab ? '0 10px 20px -5px rgba(0,0,0,0.4)' : '0 8px 20px -5px rgba(249,177,122,0.3)'
                                 }}
                             >
                                 {tab}
@@ -363,7 +366,7 @@ export default function App() {
                     </div>
 
                     {/* Horizontal Editing Panel */}
-                    <div style={{ flex: 1, background: 'rgba(45,50,80,0.90)', borderRadius: '12px', padding: '12px 24px', border: '1px solid rgba(103,111,157,0.25)', overflowX: 'auto', minWidth: 0 }}>
+                    <div style={{ flex: 1, background: 'rgba(11, 19, 43, 0.6)', borderRadius: '14px', padding: '12px 24px', border: '1px solid rgba(103,111,157,0.15)', overflowX: 'auto', minWidth: 0, boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.2)' }}>
                         <EditingPanel
                             activeFileName={activeFileName}
                             activeTab={activeTab}
@@ -397,15 +400,15 @@ export default function App() {
                                 />
                             )
                         ) : (
-                            <div style={{ flex: 1, backgroundColor: 'rgba(66,71,105,0.75)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', borderRadius: '24px', border: '1px solid rgba(103,111,157,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 32px rgba(0,0,0,0.4)', position: 'relative', overflow: 'hidden' }}>
-                                <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '3px', background: '#f9b17a' }}></div>
+                            <div style={{ flex: 1, backgroundColor: 'rgba(28, 37, 65, 0.5)', backdropFilter: 'blur(15px)', WebkitBackdropFilter: 'blur(15px)', borderRadius: '24px', border: '1px solid rgba(103,111,157,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--shadow-glass)', position: 'relative', overflow: 'hidden' }}>
+                                <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: 'linear-gradient(90deg, transparent, #f9b17a, transparent)' }}></div>
                                 <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.7)' }}>
-                                    <Database size={64} strokeWidth={1.5} style={{ margin: '0 auto 24px', color: '#f9b17a', opacity: 0.9 }} />
-                                    <h2 style={{ fontSize: '2.5rem', color: '#ffffff', fontFamily: 'Outfit', fontWeight: '800', marginBottom: '12px', letterSpacing: '-0.5px' }}>
-                                        EXCEL VIEW
+                                    <Database size={64} strokeWidth={1} style={{ margin: '0 auto 24px', color: '#f9b17a', opacity: 0.8, filter: 'drop-shadow(0 0 10px rgba(249,177,122,0.3))' }} />
+                                    <h2 style={{ fontSize: '2.8rem', color: '#ffffff', fontFamily: 'Outfit', fontWeight: '800', marginBottom: '12px', letterSpacing: '-1px' }}>
+                                        WORKSPACE
                                     </h2>
-                                    <p style={{ fontSize: '1.1rem', maxWidth: '350px', margin: '0 auto', color: '#ffffff', opacity: 0.7 }}>
-                                        Your data will be visualized here. Please upload a CSV to begin.
+                                    <p style={{ fontSize: '1.1rem', maxWidth: '380px', margin: '0 auto', color: '#ffffff', opacity: 0.6, lineHeight: '1.6' }}>
+                                        Ready for analysis. Securely upload your CSV data to initialize the visual intelligence engine.
                                     </p>
                                 </div>
                             </div>
@@ -430,10 +433,14 @@ export default function App() {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            boxShadow: '0 8px 24px rgba(249,177,122,0.4)',
+                            boxShadow: '0 10px 30px -5px rgba(249,177,122,0.5)',
                             zIndex: 100,
-                            animation: 'fadeInUp 0.3s ease'
+                            border: '1px solid rgba(255,255,255,0.2)',
+                            transition: 'transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)',
+                            animation: 'fadeInUp 0.5s ease'
                         }}
+                        onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.1)'}
+                        onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
                     >
                         <MessageSquare size={24} />
                     </button>
@@ -441,15 +448,14 @@ export default function App() {
             </div>
 
             {/* RIGHT SIDEBAR - RAG CHATBOT */}
-            <div style={{ backgroundColor: 'rgba(45,50,80,0.90)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)', borderLeft: '1px solid rgba(103,111,157,0.25)', display: 'flex', flexDirection: 'column', zIndex: 40 }}>
+            <div style={{ backgroundColor: 'rgba(28, 37, 65, 0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(103,111,157,0.15)', borderRadius: '20px', display: 'flex', flexDirection: 'column', zIndex: 40, boxShadow: 'var(--shadow-glass)' }}>
                 {/* RAG Header */}
                 <div style={{ padding: '24px 32px', borderBottom: '1px solid rgba(103,111,157,0.2)', display: 'flex', alignItems: 'center', gap: '16px', position: 'relative' }}>
-                    <div style={{ padding: '10px', backgroundColor: '#f9b17a', borderRadius: '12px' }}>
-                        <MessageSquare size={24} color="#2d3250" strokeWidth={2.5} />
+                    <div style={{ padding: '10px', backgroundColor: '#f9b17a', borderRadius: '12px', boxShadow: '0 5px 15px rgba(249,177,122,0.3)' }}>
+                        <MessageSquare size={22} color="#0B132B" strokeWidth={2.5} />
                     </div>
                     <div style={{ flex: 1 }}>
-                        <h2 style={{ fontSize: '1.4rem', margin: 0, fontFamily: 'Outfit', fontWeight: '800', color: '#ffffff', letterSpacing: '-0.5px' }}>RAG</h2>
-                        <p style={{ fontSize: '0.8rem', color: 'rgba(103,111,157,0.9)', margin: '2px 0 0 0', fontWeight: '600' }}>AI Assistant</p>
+                        <h2 style={{ fontSize: '1.4rem', margin: 0, fontFamily: 'Outfit', fontWeight: '800', color: '#ffffff', letterSpacing: '-0.5px' }}>LensAI</h2>
                     </div>
 
                     {/* Clear Chat Button */}
@@ -476,37 +482,41 @@ export default function App() {
                     <button
                         onClick={() => setShowRag(false)}
                         style={{
-                            background: 'transparent',
-                            border: 'none',
+                            background: 'rgba(255,255,255,0.05)',
+                            border: '1px solid rgba(255,255,255,0.1)',
                             cursor: 'pointer',
-                            color: 'rgba(255,255,255,0.5)',
+                            color: 'rgba(255,255,255,0.6)',
                             padding: '8px',
-                            borderRadius: '8px',
+                            borderRadius: '10px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            transition: 'all 0.2s',
+                            transition: 'all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)',
                         }}
+                        onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)'}
+                        onMouseLeave={e => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.05)'}
                     >
                         <RefreshCw size={18} style={{ transform: 'rotate(45deg)' }} />
                     </button>
                 </div>
 
                 {/* Chat Messages */}
-                <div style={{ flex: 1, padding: '24px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '24px', backgroundColor: 'rgba(30,34,64,0.50)' }}>
+                <div style={{ flex: 1, padding: '24px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '20px', backgroundColor: 'rgba(11, 19, 43, 0.3)' }}>
                     {chatHistory.map((msg, idx) => (
                         <div key={idx} style={{
                             alignSelf: msg.role === 'assistant' ? 'flex-start' : 'flex-end',
-                            backgroundColor: msg.role === 'assistant' ? 'rgba(66,71,105,0.80)' : '#f9b17a',
-                            color: msg.role === 'assistant' ? '#ffffff' : '#2d3250',
-                            border: msg.role === 'assistant' ? '1px solid rgba(103,111,157,0.25)' : 'none',
-                            padding: '16px 20px',
-                            borderRadius: msg.role === 'assistant' ? '4px 20px 20px 20px' : '20px 4px 20px 20px',
-                            maxWidth: '90%',
-                            fontSize: '0.95rem',
-                            lineHeight: '1.6',
+                            backgroundColor: msg.role === 'assistant' ? 'rgba(28, 37, 65, 0.8)' : 'linear-gradient(135deg, #f9b17a 0%, #e8965a 100%)',
+                            color: msg.role === 'assistant' ? '#ffffff' : '#0B132B',
+                            border: msg.role === 'assistant' ? '1px solid rgba(103,111,157,0.2)' : 'none',
+                            padding: '14px 18px',
+                            borderRadius: msg.role === 'assistant' ? '4px 18px 18px 18px' : '18px 4px 18px 18px',
+                            maxWidth: '85%',
+                            fontSize: '0.9rem',
+                            lineHeight: '1.5',
                             fontWeight: msg.role === 'assistant' ? '500' : '700',
-                            whiteSpace: 'pre-wrap'
+                            whiteSpace: 'pre-wrap',
+                            boxShadow: msg.role === 'assistant' ? '0 4px 15px rgba(0,0,0,0.2)' : '0 8px 20px -5px rgba(249,177,122,0.4)',
+                            background: msg.role === 'user' ? 'linear-gradient(135deg, #f9b17a 0%, #e8965a 100%)' : 'rgba(28, 37, 65, 0.8)'
                         }}>
                             {msg.content}
                         </div>
@@ -519,11 +529,11 @@ export default function App() {
                 </div>
 
                 {/* Chat Input */}
-                <div style={{ padding: '24px', borderTop: '1px solid rgba(103,111,157,0.2)', backgroundColor: 'rgba(45,50,80,0.60)' }}>
-                    <div style={{ display: 'flex', gap: '10px', backgroundColor: 'rgba(30,34,64,0.80)', borderRadius: '14px', padding: '8px', border: '1px solid rgba(103,111,157,0.25)' }}>
+                <div style={{ padding: '24px', borderTop: '1px solid rgba(103,111,157,0.15)', backgroundColor: 'rgba(11, 19, 43, 0.4)' }}>
+                    <div style={{ display: 'flex', gap: '10px', backgroundColor: 'rgba(11, 19, 43, 0.6)', borderRadius: '16px', padding: '8px', border: '1px solid rgba(103,111,157,0.2)', boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.2)' }}>
                         <input
                             type="text"
-                            placeholder="Ask the RAG..."
+                            placeholder="Ask about your data..."
                             value={chatMessage}
                             onChange={(e) => setChatMessage(e.target.value)}
                             onKeyDown={(e) => {
@@ -531,14 +541,14 @@ export default function App() {
                                     handleSendMessage();
                                 }
                             }}
-                            style={{ flex: 1, padding: '12px 16px', border: 'none', backgroundColor: 'transparent', outline: 'none', fontSize: '0.95rem', color: '#ffffff', fontWeight: '500' }}
+                            style={{ flex: 1, padding: '10px 14px', border: 'none', backgroundColor: 'transparent', outline: 'none', fontSize: '0.9rem', color: '#ffffff', fontWeight: '500' }}
                             disabled={isChatLoading}
                         />
                         <button
                             onClick={handleSendMessage}
                             disabled={isChatLoading || !chatMessage.trim()}
-                            style={{ width: '48px', height: '48px', backgroundColor: '#2d3250', color: '#f9b17a', border: 'none', borderRadius: '12px', cursor: (isChatLoading || !chatMessage.trim()) ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s', opacity: (chatMessage && !isChatLoading) ? 1 : 0.6, boxShadow: '0 4px 16px rgba(0,0,0,0.4)' }}>
-                            <Send size={20} />
+                            style={{ width: '44px', height: '44px', backgroundColor: '#f9b17a', color: '#0B132B', border: 'none', borderRadius: '12px', cursor: (isChatLoading || !chatMessage.trim()) ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)', opacity: (chatMessage && !isChatLoading) ? 1 : 0.4, boxShadow: (chatMessage && !isChatLoading) ? '0 5px 15px rgba(249,177,122,0.4)' : 'none' }}>
+                            <Send size={18} />
                         </button>
                     </div>
                 </div>

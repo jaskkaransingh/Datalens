@@ -157,3 +157,24 @@ Provide a structured explanation.
 """
 
         return self.llm.generate(context_text, prompt)
+
+    def generate_action_insights(self, snapshot: dict):
+        """
+        Generates proactive insights for a given dataset operation.
+        """
+        operation = snapshot.get("operation", "unknown operation")
+        
+        prompt = f"""
+You are a professional data analyst. Analyze the following dataset operation snapshot and provide a short insight.
+
+1. Explain what action was performed.
+2. How the dataset changed.
+3. Whether the change improved data quality.
+4. Suggested next step.
+
+Dataset Snapshot:
+{snapshot}
+
+Keep the response short, under 80 words, and professional. The user should not have to ask a question.
+"""
+        return self.llm.generate(str(snapshot), prompt)

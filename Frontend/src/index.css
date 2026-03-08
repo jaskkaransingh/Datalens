@@ -2,16 +2,13 @@
 
 :root {
     /* ── 5-Color Palette ───────────────────────────── */
-    --color-darkest: #2d3250;
-    /* base canvas, inputs        */
-    --color-dark: #424769;
-    /* panels, cards, surfaces    */
-    --color-mid: #676f9d;
-    /* borders, muted text        */
-    --color-white: #ffffff;
-    /* primary text, data         */
-    --color-accent: #f9b17a;
-    /* highlights, active, CTAs   */
+    --color-darkest: #0B132B; /* Deep Navy Base */
+    --color-dark: #1C2541;    /* Panel/Card Surface */
+    --color-mid: #3A506B;     /* Borders/Muted text */
+    --color-white: #FFFFFF;
+    --color-accent: #f9b17a;  /* Amber */
+    --color-accent-bright: #ffc9a1;
+    --color-accent-glow: rgba(249, 177, 122, 0.4);
 
     /* ── Alpha variants ───────────────────────────── */
     --color-mid-30: rgba(103, 111, 157, 0.30);
@@ -43,12 +40,13 @@
     --border-mid: var(--color-mid-30);
     --border-soft: var(--color-mid-10);
 
-    --accent-glow: 0 0 20px rgba(249, 177, 122, 0.25);
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.4);
-    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
-    --shadow-lg: 0 20px 48px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(103, 111, 157, 0.08);
-    --shadow-accent: 0 6px 20px rgba(249, 177, 122, 0.30);
-    --shadow-premium: var(--shadow-lg);
+    --accent-glow: 0 0 25px var(--color-accent-glow);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
+    --shadow-glass: 0 10px 40px rgba(0, 0, 0, 0.4);
+    --shadow-accent: 0 6px 20px rgba(249, 177, 122, 0.25);
+    --shadow-premium: 0 20px 60px rgba(0, 0, 0, 0.6);
 
     /* ── Backward compat aliases ───────────────────── */
     --cerulean: var(--color-accent);
@@ -95,7 +93,7 @@
 body {
     font-family: 'Inter', system-ui, sans-serif;
     background-color: var(--color-darkest);
-    background-image: url('/bg.png');
+    background-image: radial-gradient(circle at 40% 40%, rgba(28, 37, 65, 0.7) 0%, rgba(11, 19, 43, 0.9) 100%), url('/bg.png');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -190,14 +188,14 @@ h3,
 
 /* ── Cards ────────────────────────────────────────── */
 .card {
-    background: rgba(66, 71, 105, 0.80);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid var(--color-mid-30);
-    border-radius: var(--radius-lg);
-    padding: 2rem;
-    box-shadow: var(--shadow-lg);
-    transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+    background: rgba(28, 37, 65, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(103, 111, 157, 0.2);
+    border-radius: 18px;
+    padding: 2.5rem;
+    box-shadow: var(--shadow-glass);
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
     position: relative;
     overflow: hidden;
 }
@@ -215,8 +213,8 @@ h3,
 }
 
 .card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-lg), var(--accent-glow);
+    transform: translateY(-5px);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), var(--accent-glow);
 }
 
 .card:hover::before {
@@ -262,7 +260,7 @@ h3,
     color: var(--color-darkest);
     font-weight: 800;
     border-color: var(--color-accent);
-    box-shadow: var(--shadow-accent), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    box-shadow: 0 10px 20px -5px rgba(249, 177, 122, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .nav-item.active .nav-icon {
@@ -288,12 +286,13 @@ h3,
 .btn-primary {
     background: linear-gradient(135deg, var(--color-accent), #e8965a);
     color: var(--color-darkest);
-    box-shadow: var(--shadow-accent);
+    box-shadow: 0 6px 16px -4px rgba(249, 177, 122, 0.5);
 }
 
 .btn-primary:hover {
     filter: brightness(1.1);
     transform: translateY(-2px);
+    box-shadow: 0 8px 25px -4px rgba(249, 177, 122, 0.6);
 }
 
 .btn-secondary {
@@ -339,11 +338,11 @@ h3,
 
 /* ── Spreadsheet ─────────────────────────────────── */
 .spreadsheet-wrap {
-    border: 1px solid var(--color-mid-30);
-    border-radius: var(--radius-md);
+    border: 1px solid rgba(103, 111, 157, 0.2);
+    border-radius: 14px;
     overflow: auto;
-    background: rgba(45, 50, 80, 0.95);
-    box-shadow: var(--shadow-lg);
+    background: rgba(28, 37, 65, 0.85);
+    box-shadow: var(--shadow-premium);
 }
 
 .spreadsheet-table {
@@ -353,16 +352,16 @@ h3,
 }
 
 .spreadsheet-table th {
-    background: rgba(30, 34, 64, 0.98);
-    padding: 0.9rem 1.1rem;
+    background: rgba(11, 19, 43, 0.95);
+    padding: 1.1rem;
     text-align: left;
-    font-size: 0.68rem;
+    font-size: 0.7rem;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.12em;
     color: var(--color-accent);
-    border-bottom: 2px solid rgba(249, 177, 122, 0.4);
-    border-right: 1px solid var(--color-mid-10);
+    border-bottom: 2px solid rgba(249, 177, 122, 0.25);
+    border-right: 1px solid rgba(103, 111, 157, 0.1);
     white-space: nowrap;
     position: sticky;
     top: 0;
@@ -395,8 +394,9 @@ h3,
 }
 
 .spreadsheet-table tbody tr:hover td {
-    background: rgba(249, 177, 122, 0.12) !important;
+    background: rgba(249, 177, 122, 0.08) !important;
     color: #ffffff !important;
+    transition: background 0.2s ease;
 }
 
 /* ── Cell Status Badges ──────────────────────────── */
@@ -577,9 +577,10 @@ h3,
 }
 
 .chart-type-btn:hover {
-    background: var(--color-mid-20);
+    background: rgba(103, 111, 157, 0.25);
     border-color: var(--color-accent);
     color: var(--color-white);
+    box-shadow: 0 4px 15px rgba(249, 177, 122, 0.1);
 }
 
 .chart-type-btn.active {

@@ -11,8 +11,11 @@ from utils.validators import auto_convert_types, normalize_categories, validatio
 # events
 from events.dataset_snapshot_event import create_dataset_snapshot
 from events.event_dispatcher import dispatch_event
+from services.rag_service import RAGService
+from utils.snapshot_util import generate_lean_snapshot
 
 router = APIRouter()
+rag_service = RAGService()
 
 
 @router.post("/upload")
@@ -61,7 +64,10 @@ async def upload_csv(file: UploadFile = File(...)):
             "rows": int(df.shape[0]),
             "columns": list(df.columns),
             "preview": preview,
-            "snapshot": snapshot
+            "snapshot": snapshot,
+            "insights": rag_service.generate_action_insights(
+                generate_lean_snapshot(df, "upload")
+            )
         }
 
     except Exception as e:

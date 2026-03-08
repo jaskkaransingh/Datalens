@@ -307,7 +307,7 @@ export default function EditingPanel({
         return dataset.filter(row => {
             const val = String(row[valCol] ?? '').trim();
             if (val === '' || val.toLowerCase() === 'null') return false;
-            if (valType === 'Integer') return isNaN(parseFloat(val));
+            if (valType === 'Integer' || valType === 'Number') return isNaN(parseFloat(val));
             if (valType === 'Email') return !val.includes('@');
             return false;
         }).length;
@@ -415,23 +415,27 @@ export default function EditingPanel({
                     {columns.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
 
+                {valCol && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', backgroundColor: '#2d3250', borderRadius: '10px', border: '1px solid rgba(103,111,157,0.25)' }}>
+                        <select
+                            value={valType}
+                            onChange={e => {
+                                setValType(e.target.value);
+                                setValidationRules(prev => ({ ...prev, [valCol]: { ...prev[valCol], type: e.target.value } }));
+                            }}
+                            style={{ border: 'none', fontWeight: '850', fontSize: '0.7rem', background: 'transparent', outline: 'none', color: '#f9b17a' }}>
+                            <option value="String">String</option>
+                            <option value="Integer">Integer</option>
+                            <option value="Number">Number</option>
+                            <option value="Date">Date</option>
+                            <option value="Email">Email</option>
+                            <option value="Boolean">Boolean</option>
+                        </select>
+                    </div>
+                )}
+
                 {valCol && valSubTab === 'Type' && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, minWidth: 0 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', backgroundColor: '#2d3250', borderRadius: '10px', border: '1px solid rgba(103,111,157,0.25)' }}>
-                            <select
-                                value={valType}
-                                onChange={e => {
-                                    setValType(e.target.value);
-                                    setValidationRules(prev => ({ ...prev, [valCol]: { ...prev[valCol], type: e.target.value } }));
-                                }}
-                                style={{ border: 'none', fontWeight: '850', fontSize: '0.7rem', background: 'transparent', outline: 'none', color: '#f9b17a' }}>
-                                <option value="String">String</option>
-                                <option value="Integer">Integer</option>
-                                <option value="Date">Date</option>
-                                <option value="Email">Email</option>
-                                <option value="Boolean">Boolean</option>
-                            </select>
-                        </div>
 
                         {mismatchCount > 0 && (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
@@ -476,15 +480,24 @@ export default function EditingPanel({
 
                 {valCol && valSubTab === 'Logical' && !showResolution && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: 0 }}>
-                        {valType === 'Integer' && (
-                            <div style={{ display: 'flex', gap: '4px', alignItems: 'center', flexShrink: 0 }}>
-                                <input placeholder="Min" value={validationRules?.[valCol]?.min ?? ''}
+                        {(valType === 'Integer' || valType === 'Number') && (
+                            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexShrink: 0, padding: '4px 12px', backgroundColor: 'rgba(249,177,122,0.1)', borderRadius: '10px', border: '1px solid rgba(249,177,122,0.2)' }}>
+                                <span style={{ fontSize: '0.65rem', color: '#f9b17a', fontWeight: '800', textTransform: 'uppercase' }}>Range:</span>
+                                <input 
+                                    placeholder="Min" 
+                                    title="Minimum allow value"
+                                    value={validationRules?.[valCol]?.min ?? ''}
                                     onChange={e => setValidationRules(prev => ({ ...prev, [valCol]: { ...prev[valCol], min: e.target.value ? Number(e.target.value) : undefined } }))}
-                                    style={{ width: '35px', padding: '6px', fontSize: '0.65rem', borderRadius: '6px', border: '1px solid var(--border-mid)', outline: 'none' }} />
-                                <span style={{ opacity: 0.3 }}>-</span>
-                                <input placeholder="Max" value={validationRules?.[valCol]?.max ?? ''}
+                                    style={{ width: '45px', padding: '6px 8px', fontSize: '0.75rem', borderRadius: '6px', border: '1px solid rgba(103,111,157,0.3)', backgroundColor: '#2d3250', color: '#ffffff', outline: 'none', fontWeight: '700' }} 
+                                />
+                                <span style={{ color: '#f9b17a', fontWeight: '900' }}>→</span>
+                                <input 
+                                    placeholder="Max" 
+                                    title="Maximum allow value"
+                                    value={validationRules?.[valCol]?.max ?? ''}
                                     onChange={e => setValidationRules(prev => ({ ...prev, [valCol]: { ...prev[valCol], max: e.target.value ? Number(e.target.value) : undefined } }))}
-                                    style={{ width: '35px', padding: '6px', fontSize: '0.65rem', borderRadius: '6px', border: '1px solid var(--border-mid)', outline: 'none' }} />
+                                    style={{ width: '45px', padding: '6px 8px', fontSize: '0.75rem', borderRadius: '6px', border: '1px solid rgba(103,111,157,0.3)', backgroundColor: '#2d3250', color: '#ffffff', outline: 'none', fontWeight: '700' }} 
+                                />
                             </div>
                         )}
 
@@ -501,9 +514,24 @@ export default function EditingPanel({
 
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
                             {failingRowsIndices.length > 0 && (
-                                <span style={{ fontSize: '0.65rem', fontWeight: '900', color: '#ef4444' }}>{failingRowsIndices.length} MISMATCH</span>
+                                <span style={{ fontSize: '0.65rem', fontWeight: '900', color: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', padding: '4px 8px', borderRadius: '6px' }}>{failingRowsIndices.length} VIOLATIONS</span>
                             )}
-                            <button onClick={() => failingRowsIndices.length > 0 ? setShowResolution(true) : alert("All rows pass current logic.")} style={{ padding: '8px 12px', backgroundColor: 'var(--ink-black)', color: 'white', borderRadius: '8px', fontWeight: '900', cursor: 'pointer', border: 'none', fontSize: '0.65rem' }}>COMMIT</button>
+                            <button 
+                                onClick={() => failingRowsIndices.length > 0 ? setShowResolution(true) : alert("All rows pass current validation logic.")} 
+                                style={{ 
+                                    padding: '8px 16px', 
+                                    background: 'linear-gradient(135deg, #f9b17a, #e8965a)', 
+                                    color: '#2d3250', 
+                                    borderRadius: '10px', 
+                                    fontWeight: '900', 
+                                    cursor: 'pointer', 
+                                    border: 'none', 
+                                    fontSize: '0.7rem',
+                                    boxShadow: '0 4px 12px rgba(249,177,122,0.2)'
+                                }}
+                            >
+                                APPLY
+                            </button>
                         </div>
                     </div>
                 )}

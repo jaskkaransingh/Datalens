@@ -3,9 +3,12 @@ from fastapi import APIRouter, HTTPException
 from services.file_service import get_current_df, get_dataset_name
 from services.clean_service import impute_missing_median
 
+from services.rag_service import RAGService
+from utils.snapshot_util import generate_lean_snapshot
 from events.event_dispatcher import dispatch_event
 
 router = APIRouter()
+rag_service = RAGService()
 
 
 @router.post("/clean/{column}")
@@ -27,6 +30,11 @@ def clean_column(column: str):
         # Send event to RAG pipeline
         dispatch_event(event)
 
+        # Generate lean snapshot for proactive insights
+        snapshot = generate_lean_snapshot(df, "clean_missing", column)
+        insights = rag_service.generate_action_insights(snapshot)
+
+        event["insights"] = insights
         return event
 
     except Exception as e:

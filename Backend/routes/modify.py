@@ -1,8 +1,11 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from services.file_service import get_current_df
+from services.rag_service import RAGService
+from utils.snapshot_util import generate_lean_snapshot
 
 router = APIRouter()
+rag_service = RAGService()
 
 class CellUpdate(BaseModel):
     row_index: int
@@ -29,7 +32,10 @@ async def update_cell(update: CellUpdate):
                 "row": update.row_index,
                 "col": update.column_name,
                 "val": update.new_value
-            }
+            },
+            "insights": rag_service.generate_action_insights(
+                generate_lean_snapshot(df, "cell_update", update.column_name)
+            )
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Sync failed: {str(e)}")

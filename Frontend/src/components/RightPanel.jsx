@@ -44,10 +44,10 @@ export default function RightPanel({ stats, dataset = [] }) {
                     display: 'flex',
                     alignItems: 'center',
                     gap: 12,
-                    background: 'rgba(66,71,105,0.70)',
-                    padding: '12px 16px',
-                    borderRadius: 12,
-                    border: '1px solid rgba(249,177,122,0.35)'
+                    background: 'rgba(11, 19, 43, 0.4)',
+                    padding: '14px 18px',
+                    borderRadius: '14px',
+                    border: '1px solid rgba(249,177,122,0.2)'
                 }}>
                     <div style={{ width: 8, height: 8, background: '#10b981', borderRadius: '50%', boxShadow: '0 0 12px #10b981' }} />
                     <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#ffffff' }}>System Python API</div>
@@ -79,10 +79,10 @@ export default function RightPanel({ stats, dataset = [] }) {
             <div className="rp-section" style={{ flex: 1 }}>
                 <div className="panel-section-title">System Status Monitor</div>
                 <div style={{
-                    background: 'rgba(66,71,105,0.70)',
-                    borderRadius: 12,
+                    background: 'rgba(11, 19, 43, 0.4)',
+                    borderRadius: '16px',
                     padding: '1.5rem',
-                    border: '1px solid rgba(249,177,122,0.25)',
+                    border: '1px solid rgba(249,177,122,0.15)',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',

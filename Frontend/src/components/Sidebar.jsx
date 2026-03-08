@@ -31,9 +31,9 @@ export default function Sidebar({
     return (
         <aside className="sidebar">
             {/* Logo Section */}
-            <div className="sidebar-logo-container">
-                <div className="sidebar-logo">Data<span>Lens</span></div>
-                <div className="sidebar-badge">Industrial Logic</div>
+            <div className="sidebar-logo-container" style={{ padding: '8px' }}>
+                <div className="sidebar-logo" style={{ fontSize: '1.8rem', fontWeight: 900, fontFamily: 'Outfit', letterSpacing: '-1px' }}>Data<span style={{ color: '#f9b17a' }}>Lens</span></div>
+                <div className="sidebar-badge" style={{ fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', color: 'rgba(103,111,157,0.8)', padding: '2px 6px', border: '1px solid rgba(103,111,157,0.2)', borderRadius: '6px', marginTop: '4px' }}>Visual Intelligence</div>
             </div>
 
             <div className="sidebar-divider" style={{ background: 'rgba(103, 111, 157, 0.2)', margin: '1rem 0 2rem 0' }} />
@@ -58,8 +58,8 @@ export default function Sidebar({
 
             {/* Display Mode - Segmented Control */}
             <div className="sidebar-section">
-                <div className="sidebar-section-title">Analytical Perspective</div>
-                <div className="segmented-control mt-2" style={{ background: 'rgba(45,50,80,0.60)', border: '1px solid rgba(103, 111, 157, 0.25)' }}>
+                <div className="sidebar-section-title">Perspective</div>
+                <div className="segmented-control mt-2" style={{ background: 'rgba(11, 19, 43, 0.4)', border: '1px solid rgba(103, 111, 157, 0.15)', borderRadius: '12px' }}>
                     {['chart', 'both'].map(m => (
                         <button
                             key={m}

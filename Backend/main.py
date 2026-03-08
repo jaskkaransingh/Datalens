@@ -30,6 +30,7 @@ app.include_router(profile.router, prefix="/api", tags=["Profile"])
 app.include_router(clean.router, prefix="/api", tags=["Cleaning"])
 app.include_router(history.router, prefix="/api", tags=["History"])
 app.include_router(modify.router, prefix="/api", tags=["Modify"])
+app.include_router(visualize.router, prefix="/api", tags=["visualize"])
 
 @app.get("/")
 def root():
