@@ -25,9 +25,13 @@ export default function App() {
         { role: 'assistant', content: 'Hello! I am connected to your RAG backend. You can ask me to analyze the structural properties of your dataset or find correlations.' }
     ]);
     const [isChatLoading, setIsChatLoading] = useState(false);
+    const [history, setHistory] = useState([]);
 
-    // History for Undo
-    const [history, setHistory] = useState([]); // Array of dataset versions
+    // Helper to add assistant messages to chat
+    const addAssistantMessage = (content) => {
+        if (!content) return;
+        setChatHistory(prev => [...prev, { role: 'assistant', content }]);
+    };
 
     // Data States
     const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -80,6 +84,11 @@ export default function App() {
             setUploadedFiles(prev => [...prev, newFile]);
             setActiveFileName(file.name);
             setValidationRules({});
+
+            // NEW: Show proactive insights from upload
+            if (result.insights) {
+                addAssistantMessage(result.insights);
+            }
 
         } catch (err) {
             console.warn("Upload failed to backend, falling back to basic client-side parsing...", err);
@@ -378,6 +387,7 @@ export default function App() {
                             chartType={chartType} setChartType={setChartType}
                             validationRules={validationRules}
                             setValidationRules={setValidationRules}
+                            addAssistantMessage={addAssistantMessage}
                         />
                     </div>
                 </div>

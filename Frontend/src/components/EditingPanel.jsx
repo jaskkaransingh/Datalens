@@ -12,18 +12,25 @@ export default function EditingPanel({
     visYCol, setVisYCol,
     chartType, setChartType,
     // Validation State
-    validationRules, setValidationRules
+    validationRules, setValidationRules,
+    addAssistantMessage
 }) {
     const API_BASE = "http://localhost:5000/api";
 
     const logToRag = async (message) => {
         if (!activeFileName) return;
         try {
-            await fetch(`${API_BASE}/log_event`, {
+            const resp = await fetch(`${API_BASE}/log_event`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ message, dataset_name: activeFileName })
             });
+            if (resp.ok) {
+                const result = await resp.json();
+                if (result.insights && addAssistantMessage) {
+                    addAssistantMessage(result.insights);
+                }
+            }
         } catch (e) {
             console.warn("Failed to log to RAG:", e);
         }

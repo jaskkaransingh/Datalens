@@ -78,7 +78,16 @@ def log_event(event: LogEvent):
             "dataset_name": event.dataset_name
         }
     )
-    return {"status": "Logged interaction to RAG"}
+    # NEW: generate insight for the interaction
+    insight = rag_service.generate_action_insights({
+        "operation": "user_action",
+        "details": event.message
+    })
+    
+    return {
+        "status": "Logged interaction to RAG",
+        "insights": insight
+    }
 
 if __name__ == "__main__":
     import uvicorn
