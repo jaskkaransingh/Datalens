@@ -54,12 +54,13 @@ async def upload_csv(file: UploadFile = File(...)):
         dispatch_event(event)
 
         # Response
+        preview = df.fillna("").astype(str).to_dict(orient="records")
         return {
             "status": "success",
             "dataset_name": file.filename,
             "rows": int(df.shape[0]),
-            "columns": int(df.shape[1]),
-            "column_names": list(df.columns),
+            "columns": list(df.columns),
+            "preview": preview,
             "snapshot": snapshot
         }
 

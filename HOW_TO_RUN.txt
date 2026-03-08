@@ -1,0 +1,72 @@
+========================================================================
+                      DATALENS - HOW TO RUN GUIDE
+========================================================================
+
+Follow these steps to get both the Backend and Frontend running correctly.
+
+------------------------------------------------------------------------
+1. BACKEND SETUP (Python / FastAPI)
+------------------------------------------------------------------------
+The backend handles data processing, RAG (Retrieval-Augmented Generation), 
+and communication with the AI models.
+
+Terminal 1:
+1. Navigate to the backend folder:
+   cd Backend
+
+2. Ensure you have the requirements installed:
+   pip install -r requirements.txt
+
+3. RUN THE BACKEND:
+   python main.py
+
+* The backend runs on: http://localhost:5000
+
+------------------------------------------------------------------------
+2. FRONTEND SETUP (React / Vite)
+------------------------------------------------------------------------
+The frontend is the user interface where you upload CSVs and chat.
+
+Terminal 2:
+1. Navigate to the frontend folder:
+   cd Frontend
+
+2. Ensure dependencies are installed (first time only):
+   npm install
+
+3. RUN THE FRONTEND:
+   npm run dev
+
+* The frontend runs on: http://localhost:5173 (usually)
+
+------------------------------------------------------------------------
+3. API KEYS & CONFIGURATION
+------------------------------------------------------------------------
+If the chatbot stops responding or gives a "Credits" error, you likely 
+need to change the API key.
+
+Location: Backend/.env
+
+Current Setting:
+OPENROUTER_API_KEY=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
+
+How to change:
+1. Go to https://openrouter.ai/settings/credits
+2. Generate a new key.
+3. Open 'Backend/.env' and paste the new key after 'OPENROUTER_API_KEY='.
+4. IMPORTANT: You MUST restart the Backend terminal (Terminal 1) for 
+   the new key to take effect.
+
+------------------------------------------------------------------------
+4. RUNNING EVERYTHING CORRECTLY (Checklist)
+------------------------------------------------------------------------
+[ ] Backend terminal is running 'python main.py' without errors.
+[ ] Frontend terminal is running 'npm run dev'.
+[ ] You have uploaded a CSV file via the "Add CSV" button.
+[ ] The Excel View shows your data.
+[ ] The Chatbot is open and ready for questions.
+
+If you encounter a "TypeError: Failed to fetch" error, it usually means 
+the Backend is not running or the URL in App.jsx (API_BASE) is wrong.
+Current API_BASE is set to: http://localhost:5000/api
+========================================================================

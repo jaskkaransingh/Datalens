@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Settings, BarChart2, CheckCircle2, Layers, Type, Filter, RefreshCw, AlertTriangle, ListFilter, PlayCircle, Info, XCircle, Edit3 } from 'lucide-react';
 
 export default function EditingPanel({
+    activeFileName,
     activeTab,
     columns,
     dataset,
@@ -13,7 +14,20 @@ export default function EditingPanel({
     // Validation State
     validationRules, setValidationRules
 }) {
+    const API_BASE = "http://localhost:5000/api";
 
+    const logToRag = async (message) => {
+        if (!activeFileName) return;
+        try {
+            await fetch(`${API_BASE}/log_event`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message, dataset_name: activeFileName })
+            });
+        } catch (e) {
+            console.warn("Failed to log to RAG:", e);
+        }
+    };
     // Local State for Clean Tab
     const [cleanCol, setCleanCol] = useState('');
     const [cleanStrategy, setCleanStrategy] = useState('');
@@ -28,15 +42,21 @@ export default function EditingPanel({
     const [valSubTab, setValSubTab] = useState('Type');
     const [showResolution, setShowResolution] = useState(false);
     const [bulkReplaceValue, setBulkReplaceValue] = useState('');
+    const [typeMismatchAction, setTypeMismatchAction] = useState('Change Data');
+    const [logicMismatchAction, setLogicMismatchAction] = useState('Change Data');
 
     // --- CLEAN HELPERS ---
-    const missingCount = useMemo(() => {
-        if (!cleanCol || !dataset) return 0;
-        return dataset.filter(row => {
+    const missingRowIndices = useMemo(() => {
+        if (!cleanCol || !dataset) return [];
+        const indices = [];
+        dataset.forEach((row, idx) => {
             const v = String(row[cleanCol] ?? '').trim().toLowerCase();
-            return v === '' || v === 'null';
-        }).length;
+            if (v === '' || v === 'null') indices.push(idx);
+        });
+        return indices;
     }, [cleanCol, dataset]);
+
+    const missingCount = missingRowIndices.length;
 
     const handleApplyClean = () => {
         if (!cleanCol || !cleanStrategy || missingCount === 0) return;
@@ -83,7 +103,7 @@ export default function EditingPanel({
                     }
                 });
                 replacementValue = modeVal;
-            } else if (cleanStrategy === 'Custom') {
+            } else if (cleanStrategy === 'Set Bulk') {
                 replacementValue = cleanCustomValue;
             }
 
@@ -97,6 +117,8 @@ export default function EditingPanel({
         }
 
         setDataset(newDataset);
+        logToRag(`User cleaned column '${cleanCol}' with strategy '${cleanStrategy}'. Replaced/dropped values as necessary.`);
+
         setCleanStrategy('');
         setCleanCustomValue('');
     };
@@ -122,6 +144,28 @@ export default function EditingPanel({
         };
     }, [valCol, dataset]);
 
+    const mismatchedUniques = useMemo(() => {
+        if (!valCol || !dataset || valSubTab !== 'Type') return [];
+        const uniqueMap = {};
+        dataset.forEach(row => {
+            const val = String(row[valCol] ?? '').trim();
+            if (val === '' || val.toLowerCase() === 'null') return;
+
+            let isMismatch = false;
+            if (valType === 'Integer') isMismatch = isNaN(parseFloat(val));
+            else if (valType === 'Email') isMismatch = !val.includes('@');
+            else if (valType === 'Boolean') {
+                const low = val.toLowerCase();
+                isMismatch = !['true', '1', 'yes', 'y', 'false', '0', 'no', 'n'].includes(low);
+            }
+
+            if (isMismatch) {
+                uniqueMap[val] = (uniqueMap[val] || 0) + 1;
+            }
+        });
+        return Object.entries(uniqueMap).map(([k, v]) => ({ value: k, occurrences: v })).sort((a, b) => b.occurrences - a.occurrences);
+    }, [valCol, valType, dataset, valSubTab]);
+
     useEffect(() => {
         setSelectedUniques({});
         setShowResolution(false);
@@ -135,27 +179,41 @@ export default function EditingPanel({
     const handleCorrectTypeMismatches = () => {
         if (!valCol) return;
 
-        const newDataset = dataset.map(row => {
-            let val = String(row[valCol] ?? '').trim();
-            if (val.toLowerCase() === 'null' || val === '') return row;
+        let newDataset = [...dataset];
 
-            let corrected = val;
-            if (valType === 'Integer') {
-                corrected = val.replace(/[^0-9.-]/g, '');
-                if (corrected === '') corrected = '0';
-            } else if (valType === 'Boolean') {
-                const low = val.toLowerCase();
-                if (['true', '1', 'yes', 'y'].includes(low)) corrected = 'TRUE';
-                else if (['false', '0', 'no', 'n'].includes(low)) corrected = 'FALSE';
-            } else if (valType === 'Email') {
-                corrected = val.toLowerCase();
-            }
+        if (typeMismatchAction === 'Delete Row') {
+            newDataset = newDataset.filter(row => {
+                let val = String(row[valCol] ?? '').trim();
+                if (val.toLowerCase() === 'null' || val === '') return true;
 
-            return { ...row, [valCol]: corrected };
-        });
+                let isMismatch = false;
+                if (valType === 'Integer') isMismatch = isNaN(parseFloat(val));
+                else if (valType === 'Email') isMismatch = !val.includes('@');
+
+                return !isMismatch;
+            });
+        } else {
+            newDataset = newDataset.map(row => {
+                let val = String(row[valCol] ?? '').trim();
+                if (val.toLowerCase() === 'null' || val === '') return row;
+
+                let isMismatch = false;
+                if (valType === 'Integer') isMismatch = isNaN(parseFloat(val));
+                else if (valType === 'Email') isMismatch = !val.includes('@');
+
+                if (!isMismatch) return row;
+
+                let corrected = val;
+                if (typeMismatchAction === 'Set to 0') {
+                    corrected = '0';
+                }
+                return { ...row, [valCol]: corrected };
+            });
+        }
 
         setDataset(newDataset);
-        alert(`Finished correcting mismatches in ${valCol} based on ${valType} rules.`);
+        logToRag(`User resolved type mismatches in column '${valCol}' against type '${valType}' using action '${typeMismatchAction}'.`);
+        alert(`Finished resolving mismatches in ${valCol}.`);
     };
 
     // Logical Logic Failures calculation
@@ -191,6 +249,16 @@ export default function EditingPanel({
         return indices;
     }, [valCol, dataset, valSubTab, selectedUniques, validationRules, valType]);
 
+    const logicFailingUniques = useMemo(() => {
+        if (!valCol || !dataset || valSubTab !== 'Logical' || failingRowsIndices.length === 0) return [];
+        const uniqueMap = {};
+        failingRowsIndices.forEach(idx => {
+            const val = String(dataset[idx][valCol] ?? '').trim();
+            uniqueMap[val] = (uniqueMap[val] || 0) + 1;
+        });
+        return Object.entries(uniqueMap).map(([k, v]) => ({ value: k, occurrences: v })).sort((a, b) => b.occurrences - a.occurrences);
+    }, [valCol, dataset, valSubTab, failingRowsIndices]);
+
     const handleApplyLogicalAction = (action) => {
         let newDataset = [...dataset];
 
@@ -206,6 +274,7 @@ export default function EditingPanel({
         }
 
         setDataset(newDataset);
+        logToRag(`User resolved logical validation failures in column '${valCol}' by performing action '${action}'.`);
         setShowResolution(false);
         setBulkReplaceValue('');
         setSelectedUniques({});
@@ -271,20 +340,48 @@ export default function EditingPanel({
                         </div>
 
                         {missingCount > 0 ? (
-                            <>
+                            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', minWidth: 0, flex: 1 }}>
                                 <select value={cleanStrategy} onChange={e => setCleanStrategy(e.target.value)} style={{ padding: '8px 12px', borderRadius: '10px', border: '1px solid rgba(103,111,157,0.25)', backgroundColor: '#2d3250', color: '#ffffff', fontWeight: '700', fontSize: '0.8rem', outline: 'none' }}>
                                     <option value="">Fix...</option>
                                     <option value="Drop">Drop Rows</option>
                                     <option value="Mean">Mean</option>
                                     <option value="Median">Median</option>
                                     <option value="Mode">Mode</option>
+                                    <option value="Set Bulk">Set Bulk...</option>
                                     <option value="Custom">Custom...</option>
                                 </select>
-                                {cleanStrategy === 'Custom' && (
-                                    <input type="text" placeholder="..." value={cleanCustomValue} onChange={e => setCleanCustomValue(e.target.value)} style={{ padding: '8px 12px', borderRadius: '10px', border: '1px solid rgba(103,111,157,0.25)', backgroundColor: '#2d3250', color: '#ffffff', width: '80px', fontSize: '0.8rem', outline: 'none' }} />
+
+                                {cleanStrategy === 'Set Bulk' && (
+                                    <>
+                                        <input type="text" placeholder="..." value={cleanCustomValue} onChange={e => setCleanCustomValue(e.target.value)} style={{ padding: '8px 12px', borderRadius: '10px', border: '1px solid rgba(103,111,157,0.25)', backgroundColor: '#2d3250', color: '#ffffff', width: '80px', fontSize: '0.8rem', outline: 'none' }} />
+                                        <button onClick={handleApplyClean} disabled={!cleanCustomValue} style={{ padding: '8px 16px', backgroundColor: '#f9b17a', color: '#2d3250', border: 'none', borderRadius: '10px', fontWeight: '800', cursor: 'pointer', fontSize: '0.75rem' }}>RESOLVE</button>
+                                    </>
                                 )}
-                                <button onClick={handleApplyClean} disabled={!cleanStrategy || (cleanStrategy === 'Custom' && !cleanCustomValue)} style={{ padding: '8px 16px', backgroundColor: '#f9b17a', color: '#2d3250', border: 'none', borderRadius: '10px', fontWeight: '800', cursor: 'pointer', fontSize: '0.75rem' }}>RESOLVE</button>
-                            </>
+
+                                {cleanStrategy === 'Custom' && (
+                                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center', backgroundColor: '#2d3250', padding: '6px 8px', borderRadius: '10px', border: '1px solid rgba(103,111,157,0.2)', flex: 1, minWidth: 0, overflowX: 'auto' }}>
+                                        {missingRowIndices.slice(0, 15).map(idx => (
+                                            <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.55rem', padding: '2px 6px', backgroundColor: '#424769', borderRadius: '6px', border: '1px solid rgba(103,111,157,0.2)', whiteSpace: 'nowrap', color: '#ffffff', flexShrink: 0 }}>
+                                                <span style={{ fontWeight: '800', color: '#ef4444' }}>Row {idx + 1}</span>
+                                                <input placeholder="Fix.." onBlur={e => {
+                                                    if (e.target.value) {
+                                                        const newVal = e.target.value;
+                                                        const newDataset = [...dataset];
+                                                        newDataset[idx] = { ...newDataset[idx], [cleanCol]: newVal };
+                                                        setDataset(newDataset);
+                                                        logToRag(`User manually corrected missing data in row ${idx + 1} column '${cleanCol}' to '${newVal}'.`);
+                                                    }
+                                                }}
+                                                    style={{ width: '40px', border: 'none', background: 'rgba(249,177,122,0.10)', color: '#f9b17a', padding: '2px', borderRadius: '3px', fontSize: '0.5rem', outline: 'none' }} />
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {['Drop', 'Mean', 'Median', 'Mode'].includes(cleanStrategy) && (
+                                    <button onClick={handleApplyClean} style={{ padding: '8px 16px', backgroundColor: '#f9b17a', color: '#2d3250', border: 'none', borderRadius: '10px', fontWeight: '800', cursor: 'pointer', fontSize: '0.75rem' }}>RESOLVE</button>
+                                )}
+                            </div>
                         ) : (
                             <div style={{ color: '#f9b17a', fontSize: '0.7rem', fontWeight: '900' }}>DATA PURE ✓</div>
                         )}
@@ -295,7 +392,7 @@ export default function EditingPanel({
     );
 
     const renderValidatePanel = () => (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', width: '100%', height: '100%' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', width: '100%', height: '100%', minWidth: 0 }}>
             {/* Header */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--ink-black)', fontWeight: '800', paddingRight: '12px', borderRight: '2px solid var(--border-mid)', height: '30px', flexShrink: 0 }}>
                 <CheckCircle2 size={20} color="var(--cerulean)" strokeWidth={2.5} />
@@ -319,7 +416,7 @@ export default function EditingPanel({
                 </select>
 
                 {valCol && valSubTab === 'Type' && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, minWidth: 0 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', backgroundColor: '#2d3250', borderRadius: '10px', border: '1px solid rgba(103,111,157,0.25)' }}>
                             <select
                                 value={valType}
@@ -337,9 +434,39 @@ export default function EditingPanel({
                         </div>
 
                         {mismatchCount > 0 && (
-                            <button onClick={handleCorrectTypeMismatches} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', backgroundColor: 'rgba(249,177,122,0.15)', color: '#f9b17a', border: '1px solid rgba(249,177,122,0.4)', borderRadius: '8px', fontSize: '0.65rem', fontWeight: '800', cursor: 'pointer' }}>
-                                <PlayCircle size={14} /> CORRECT {mismatchCount} MISMATHCES
-                            </button>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
+                                <select
+                                    value={typeMismatchAction}
+                                    onChange={e => setTypeMismatchAction(e.target.value)}
+                                    style={{ padding: '6px 10px', borderRadius: '8px', border: '1px solid rgba(249,177,122,0.4)', backgroundColor: 'rgba(249,177,122,0.1)', color: '#f9b17a', fontSize: '0.65rem', fontWeight: '800', outline: 'none' }}
+                                >
+                                    <option value="Change Data">Change Data</option>
+                                    <option value="Set to 0">Set to 0</option>
+                                    <option value="Delete Row">Delete Row</option>
+                                </select>
+
+                                {typeMismatchAction === 'Change Data' ? (
+                                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center', backgroundColor: '#2d3250', padding: '6px 8px', borderRadius: '10px', border: '1px solid rgba(103,111,157,0.2)', flex: 1, minWidth: 0, overflowX: 'auto' }}>
+                                        {mismatchedUniques.slice(0, 10).map(item => (
+                                            <div key={item.value} style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.55rem', padding: '2px 6px', backgroundColor: '#424769', borderRadius: '6px', border: '1px solid rgba(103,111,157,0.2)', whiteSpace: 'nowrap', color: '#ffffff', flexShrink: 0 }}>
+                                                <span style={{ fontWeight: '800', color: '#ef4444' }}>{item.value}</span>
+                                                <input placeholder="Fix.." onBlur={e => {
+                                                    if (e.target.value && e.target.value !== item.value) {
+                                                        const newVal = e.target.value;
+                                                        handleConvertValue(item.value, newVal);
+                                                        logToRag(`User manually corrected type mismatch '${item.value}' to '${newVal}' in column '${valCol}'.`);
+                                                    }
+                                                }}
+                                                    style={{ width: '40px', border: 'none', background: 'rgba(249,177,122,0.10)', color: '#f9b17a', padding: '2px', borderRadius: '3px', fontSize: '0.5rem', outline: 'none' }} />
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <button onClick={handleCorrectTypeMismatches} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', backgroundColor: 'rgba(249,177,122,0.15)', color: '#f9b17a', border: '1px solid rgba(249,177,122,0.4)', borderRadius: '8px', fontSize: '0.65rem', fontWeight: '800', cursor: 'pointer' }}>
+                                        <PlayCircle size={14} /> BULK RESOLVE {mismatchCount}
+                                    </button>
+                                )}
+                            </div>
                         )}
                         {mismatchCount === 0 && (
                             <div style={{ color: 'rgba(249,177,122,0.7)', fontSize: '0.6rem', fontWeight: '900' }}>DATA PURE ✓</div>
@@ -382,35 +509,61 @@ export default function EditingPanel({
                 )}
 
                 {valCol && valSubTab === 'Logical' && showResolution && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, backgroundColor: 'rgba(249,177,122,0.10)', padding: '5px 12px', borderRadius: '10px', border: '1px solid rgba(249,177,122,0.35)' }}>
-                        <span style={{ fontSize: '0.7rem', fontWeight: '900', color: '#f9b17a' }}>RESOLVE {failingRowsIndices.length} ROWS</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, backgroundColor: 'rgba(249,177,122,0.10)', padding: '5px 8px', borderRadius: '10px', border: '1px solid rgba(249,177,122,0.35)', minWidth: 0 }}>
+                        <span style={{ fontSize: '0.7rem', fontWeight: '900', color: '#f9b17a', flexShrink: 0 }}>RESOLVE {failingRowsIndices.length} ROWS</span>
 
-                        <div style={{ display: 'flex', gap: '6px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', borderRadius: '8px', border: '1px solid rgba(103,111,157,0.3)', backgroundColor: '#2d3250', overflow: 'hidden' }}>
-                                <input
-                                    placeholder="Type replacement..."
-                                    value={bulkReplaceValue}
-                                    onChange={e => setBulkReplaceValue(e.target.value)}
-                                    style={{ border: 'none', padding: '6px 10px', fontSize: '0.65rem', outline: 'none', width: '120px', backgroundColor: 'transparent', color: '#ffffff' }}
-                                />
-                                <button onClick={() => handleApplyLogicalAction('CHANGE')} style={{ border: 'none', background: '#f9b17a', color: '#2d3250', padding: '6px 10px', cursor: 'pointer', fontSize: '0.65rem', fontWeight: '800' }}>CHANGE</button>
-                            </div>
-                            <button onClick={() => handleApplyLogicalAction('DELETE')} style={{ display: 'flex', alignItems: 'center', gap: '4px', backgroundColor: '#424769', color: '#ffffff', border: '1px solid rgba(103,111,157,0.4)', borderRadius: '8px', padding: '6px 12px', fontSize: '0.65rem', fontWeight: '800', cursor: 'pointer' }}>
-                                <XCircle size={14} /> DELETE ROWS
-                            </button>
-                            <button onClick={() => setShowResolution(false)} style={{ background: 'transparent', border: 'none', color: 'rgba(103,111,157,0.8)', fontSize: '0.6rem', fontWeight: '900', cursor: 'pointer' }}>CANCEL</button>
+                        <div style={{ display: 'flex', gap: '8px', minWidth: 0, flex: 1 }}>
+                            <select
+                                value={logicMismatchAction}
+                                onChange={e => setLogicMismatchAction(e.target.value)}
+                                style={{ padding: '6px 10px', borderRadius: '8px', border: '1px solid rgba(249,177,122,0.4)', backgroundColor: 'transparent', color: '#f9b17a', fontSize: '0.65rem', fontWeight: '800', outline: 'none' }}
+                            >
+                                <option value="Change Data">Change Data</option>
+                                <option value="Set Bulk">Set Bulk</option>
+                                <option value="Delete Row">Delete Row</option>
+                            </select>
+
+                            {logicMismatchAction === 'Change Data' && (
+                                <div style={{ display: 'flex', gap: '6px', alignItems: 'center', backgroundColor: '#2d3250', padding: '2px 8px', borderRadius: '10px', border: '1px solid rgba(103,111,157,0.2)', flex: 1, minWidth: 0, overflowX: 'auto', marginRight: '8px' }}>
+                                    {logicFailingUniques.slice(0, 10).map(item => (
+                                        <div key={item.value} style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.55rem', padding: '2px 6px', backgroundColor: '#424769', borderRadius: '6px', border: '1px solid rgba(103,111,157,0.2)', whiteSpace: 'nowrap', color: '#ffffff', flexShrink: 0 }}>
+                                            <span style={{ fontWeight: '800', color: '#ef4444' }}>{item.value || '(Empty)'}</span>
+                                            <input placeholder="Fix.." onBlur={e => {
+                                                if (e.target.value && e.target.value !== item.value) {
+                                                    const newVal = e.target.value;
+                                                    handleConvertValue(item.value, newVal);
+                                                    logToRag(`User manually corrected logical logic failure '${item.value}' to '${newVal}' in column '${valCol}'.`);
+                                                }
+                                            }}
+                                                style={{ width: '40px', border: 'none', background: 'rgba(249,177,122,0.10)', color: '#f9b17a', padding: '2px', borderRadius: '3px', fontSize: '0.5rem', outline: 'none' }} />
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
+                            {logicMismatchAction === 'Set Bulk' && (
+                                <div style={{ display: 'flex', alignItems: 'center', borderRadius: '8px', border: '1px solid rgba(103,111,157,0.3)', backgroundColor: '#2d3250', overflow: 'hidden' }}>
+                                    <input
+                                        placeholder="Type replacement..."
+                                        value={bulkReplaceValue}
+                                        onChange={e => setBulkReplaceValue(e.target.value)}
+                                        style={{ border: 'none', padding: '6px 10px', fontSize: '0.65rem', outline: 'none', width: '120px', backgroundColor: 'transparent', color: '#ffffff' }}
+                                    />
+                                    <button onClick={() => handleApplyLogicalAction('CHANGE')} style={{ border: 'none', background: '#f9b17a', color: '#2d3250', padding: '6px 10px', cursor: 'pointer', fontSize: '0.65rem', fontWeight: '800' }}>CHANGE</button>
+                                </div>
+                            )}
+
+                            {logicMismatchAction === 'Delete Row' && (
+                                <button onClick={() => handleApplyLogicalAction('DELETE')} style={{ display: 'flex', alignItems: 'center', gap: '4px', backgroundColor: '#424769', color: '#ffffff', border: '1px solid rgba(103,111,157,0.4)', borderRadius: '8px', padding: '6px 12px', fontSize: '0.65rem', fontWeight: '800', cursor: 'pointer' }}>
+                                    <XCircle size={14} /> DELETE ROWS
+                                </button>
+                            )}
+
+                            <button onClick={() => setShowResolution(false)} style={{ background: 'transparent', border: 'none', color: 'rgba(103,111,157,0.8)', fontSize: '0.6rem', fontWeight: '900', cursor: 'pointer', flexShrink: 0, marginLeft: 'auto' }}>DONE</button>
                         </div>
                     </div>
                 )}
 
-                {/* Health Matrix */}
-                <div style={{ display: 'flex', gap: '6px', marginLeft: 'auto', padding: '0 8px', borderLeft: '1px solid var(--border-mid)', height: '30px', alignItems: 'center', overflowX: 'auto', maxWidth: '200px', scrollbarWidth: 'none' }}>
-                    {matrixInfo.map(m => (
-                        <div key={m.col} style={{ width: '12px', height: '20px', backgroundColor: 'rgba(103,111,157,0.15)', borderRadius: '3px', position: 'relative', flexShrink: 0 }}>
-                            <div style={{ position: 'absolute', bottom: 0, width: '100%', height: `${Math.max(10, 100 - (m.missing / dataset.length * 100))}%`, backgroundColor: m.missing > 0 ? 'rgba(249,177,122,0.5)' : '#f9b17a', borderRadius: '2px' }} />
-                        </div>
-                    ))}
-                </div>
             </div>
         </div>
     );
@@ -422,17 +575,17 @@ export default function EditingPanel({
                 <span style={{ letterSpacing: '-0.5px' }}>VIS</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1 }}>
-                <select value={visXCol} onChange={e => setVisXCol(e.target.value)} style={{ padding: '8px 12px', borderRadius: '10px', border: '1px solid rgba(103,111,157,0.25)', backgroundColor: '#2d3250', color: '#ffffff', fontSize: '0.8rem', fontWeight: '750', outline: 'none' }}>
+                <select value={visXCol} onChange={e => { setVisXCol(e.target.value); if (e.target.value) logToRag(`User selected ${e.target.value} as X-Axis for visualization.`); }} style={{ padding: '8px 12px', borderRadius: '10px', border: '1px solid rgba(103,111,157,0.25)', backgroundColor: '#2d3250', color: '#ffffff', fontSize: '0.8rem', fontWeight: '750', outline: 'none' }}>
                     <option value="">X-Axis...</option>
                     {columns.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
-                <select value={visYCol} onChange={e => setVisYCol(e.target.value)} style={{ padding: '8px 12px', borderRadius: '10px', border: '1px solid rgba(103,111,157,0.25)', backgroundColor: '#2d3250', color: '#ffffff', fontSize: '0.8rem', fontWeight: '750', outline: 'none' }}>
+                <select value={visYCol} onChange={e => { setVisYCol(e.target.value); if (e.target.value) logToRag(`User selected ${e.target.value} as Y-Axis for visualization.`); }} style={{ padding: '8px 12px', borderRadius: '10px', border: '1px solid rgba(103,111,157,0.25)', backgroundColor: '#2d3250', color: '#ffffff', fontSize: '0.8rem', fontWeight: '750', outline: 'none' }}>
                     <option value="">Y-Axis...</option>
                     {columns.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
                 <div style={{ display: 'flex', backgroundColor: '#2d3250', borderRadius: '10px', border: '1px solid rgba(103,111,157,0.25)', overflow: 'hidden' }}>
                     {['Bar', 'Line', 'Scatter'].map(type => (
-                        <button key={type} onClick={() => setChartType(type)} style={{ padding: '8px 12px', background: chartType === type ? '#f9b17a' : 'transparent', color: chartType === type ? '#2d3250' : 'rgba(103,111,157,0.8)', border: 'none', fontWeight: '800', cursor: 'pointer', fontSize: '0.7rem' }}>{type}</button>
+                        <button key={type} onClick={() => { setChartType(type); logToRag(`User changed visualization chart type to ${type}.`); }} style={{ padding: '8px 12px', background: chartType === type ? '#f9b17a' : 'transparent', color: chartType === type ? '#2d3250' : 'rgba(103,111,157,0.8)', border: 'none', fontWeight: '800', cursor: 'pointer', fontSize: '0.7rem' }}>{type}</button>
                     ))}
                 </div>
             </div>

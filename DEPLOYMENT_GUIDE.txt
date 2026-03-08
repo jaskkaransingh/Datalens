@@ -1,0 +1,65 @@
+========================================================================
+                      DATALENS - DEPLOYMENT GUIDE
+========================================================================
+
+This guide explains how to take DataLens from your local machine to a 
+live production server.
+
+------------------------------------------------------------------------
+OPTION 1: THE FASTEST WAY (Render + Vercel) - Recommended for Demos
+------------------------------------------------------------------------
+
+1. BACKEND (FastAPI) on Render.com
+   - Create a new 'Web Service' on Render and connect your GitHub repo.
+   - Root Directory: Backend
+   - Environment: Python
+   - Build Command: pip install -r requirements.txt
+   - Start Command: uvicorn main:app --host 0.0.0.0 --port $PORT
+   - Environment Variables: Add OPENROUTER_API_KEY with your key.
+
+2. FRONTEND (React) on Vercel.com
+   - Create a new project on Vercel and connect your GitHub repo.
+   - Framework Preset: Vite
+   - Root Directory: Frontend
+   - Build Command: npm run build
+   - Output Directory: dist
+   - Environment Variables: Add VITE_API_URL pointing to your Render URL.
+
+------------------------------------------------------------------------
+OPTION 2: THE PROFESSIONAL WAY (VPS + Docker) - Best for Persistence
+------------------------------------------------------------------------
+
+If you want your 'vector_store.json' (the RAG memory) to persist forever:
+
+1. Rent a VPS (DigitalOcean, AWS EC2, or Linode).
+2. Install Docker and Docker-Compose.
+3. Build a Docker Image that contains both the Backend and Frontend.
+4. Use a 'Volume' in Docker to ensure vector_store.json is saved to the 
+   disk and never deleted during updates.
+
+------------------------------------------------------------------------
+CRITICAL CODE CHANGES FOR DEPLOIMENT
+------------------------------------------------------------------------
+
+Before pushing to production, you MUST check these 3 things:
+
+1. API SWITCH (App.jsx)
+   You cannot leave 'localhost' in your code. Change the API_BASE to:
+   const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:5000/api";
+
+2. CORS SECURITY (main.py)
+   By default, we allow "*". In production, you should restrict this:
+   allow_origins=["https://your-frontend-domain.com"]
+
+3. PRODUCTION SERVER (Gunicorn)
+   On the server, use Gunicorn instead of simple Uvicorn for speed:
+   pip install gunicorn
+   gunicorn -w 4 -k uvicorn.workers.UvicornWorker main:app
+
+------------------------------------------------------------------------
+DATABASE NOTE
+------------------------------------------------------------------------
+DataLens uses a file-based VectorDB (Local JSON). If you plan on having 
+thousands of users, consider migrating the 'rag/vectordb.py' logic to 
+a cloud database like Pinecone or Weaviate.
+========================================================================

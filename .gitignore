@@ -4,11 +4,15 @@ Frontend/node_modules/
 Backend/env/
 Backend/venv/
 venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Environment variables
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*
+Backend/.env
+Frontend/.env
 
 # Build outputs
 dist/
@@ -16,6 +20,15 @@ dist-ssr/
 build/
 *.egg-info/
 .eggs/
+sdist/
+var/
+wheels/
+develop-eggs/
+downloads/
+eggs/
+lib/
+lib64/
+parts/
 
 # Python caching and bytecode
 __pycache__/
@@ -23,7 +36,9 @@ __pycache__/
 *$py.class
 *.so
 .Python
-<<<<<<< HEAD
+*.pyc
+*.pyo
+*.pyd
 
 # Logs
 *.log
@@ -32,34 +47,6 @@ yarn-debug.log*
 pnpm-debug.log*
 lerna-debug.log*
 logs/
-=======
-env/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-*.pyc
-*.pyo
-*.pyd
-
-# Virtual environments
-venv/
-ENV/
-env.bak/
-venv.bak/
-Backend/venv/
->>>>>>> 3e8a6df08b06280b0374a9a1e4985a7c619ab61d
 
 # Editor and OS-specific files
 .vscode/
@@ -73,26 +60,11 @@ Thumbs.db
 *.sln
 *.sw?
 
-<<<<<<< HEAD
-# Data files (optional, keeping CSV/JSON if they are templates/examples)
-# *.csv
-# *.json
-# !package.json
-# !package-lock.json
+# Vector database local storage
+vector_store/
+Backend/vector_store/
+Backend/vector_store.json
 
 # Tool specific
 .installed.cfg
 pip-wheel-metadata/
-=======
-# Environment variables
-.env
-Backend/.env
-
-# Vector database
-vector_store/
-Backend/vector_store/
-
-# OS junk
-Thumbs.db
-
->>>>>>> 3e8a6df08b06280b0374a9a1e4985a7c619ab61d

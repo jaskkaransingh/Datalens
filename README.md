@@ -1,77 +1,78 @@
 # DataLens 🚀
 
-**DataLens** is a high-performance, schema-agnostic data engineering and predictive visualization suite. Designed for professional data workflows, it provides tools for data cleaning, anomaly detection, real-time predictive modeling, and high-fidelity reporting.
+**DataLens** is a premium, high-performance data engineering and immersive visualization platform. It combines professional-grade data cleaning, logical validation, and predictive analytics with a live **RAG (Retrieval-Augmented Generation)** chatbot that understands every change you make to your dataset in real-time.
 
 ---
 
 ## ✨ Key Features
 
-- **Strategic Refiner**: Interactive data healing (Mean/Median/Mode), anomaly suppression, and automated dimension pruning.
-- **Predictive Unity**: Real-time Linear Regression forecasting powered by Scikit-Learn with trend analysis and R² scoring.
-- **Visualization Studio**: High-fidelity heatmaps, interactive spreadsheets, and dynamic analytics dashboards.
-- **Export Hub**: Server-side generation of Master Excel Workbooks, production-ready CSVs, and JSON files.
+- **Live RAG Context**: Integrated AI assistant that tracks your data cleaning history, column types, and visualization axes to provide intelligent, contextual insights.
+- **Granular Data Healing**: 
+  - **Clean**: Move beyond bulk fixes. Use the "Custom" rail to manually correct specific rows of missing/NaN data.
+  - **Type Validation**: Detect mismatches (Email, Integer, Date) and perform bulk or individual corrections.
+  - **Logical Validation**: Define Min/Max constraints and resolve rows that break your business logic.
+- **Micro-Animation UI**: A sleek, dark-themed interface built with glassmorphism and smooth transitions for a premium software feel.
+- **Enterprise View**: An Excel-like spreadsheet with live cell editing and instant background synchronization.
+- **Visualization Hub**: Generate Bar, Line, and Scatter charts with automated trend analysis logged to the AI engine.
 
 ---
 
-## 🛠️ Prerequisites
+## 🛠️ Technology Stack
 
-Before getting started, ensure you have the following installed:
-
-- **Node.js**: v18.0.0 or higher ([Download](https://nodejs.org/))
-- **Python**: v3.8 or higher ([Download](https://www.python.org/downloads/))
-    - *Windows Users*: Ensure "Add Python to PATH" is checked during installation.
-
----
-
-## 📦 Required Files for Setup
-
-To run the application, the following configuration files are essential:
-
-- `Frontend/package.json`: Manages Node.js dependencies for the user interface.
-- `Frontend/api/requirements.txt`: Contains Python libraries for the backend engine.
-- `start-datalens.bat`: Optimized startup script for Windows users.
+- **Frontend**: React 18, Vite, Lucide-React (Icons), Vanilla CSS (Custom Design System).
+- **Backend**: FastAPI (Python), Pandas (Data Processing), NumPy.
+- **AI/RAG**: OpenRouter API (GPT-4o Mini), Sentence-Transformers (Local Embeddings), VectorDB (Custom JSON Metadata Store).
 
 ---
 
 ## 🚀 Getting Started
 
-### Method A: Automated Start (Windows)
-The easiest way to boot the entire system is using the provided batch script:
-1. Navigate to the `Datalens` root folder.
-2. Double-click `start-datalens.bat`.
-3. The script will install dependencies and launch both servers automatically.
-4. Access the dashboard at: `http://localhost:5173`
+To run DataLens locally, you need to start the Backend and Frontend servers simultaneously.
 
-### Method B: Manual Manual (Developer Mode)
-If you prefer manual control via the terminal:
+### 1. Prerequisites
+- [Node.js](https://nodejs.org/) (v18+)
+- [Python](https://www.python.org/) (v3.9+)
 
-#### 1. Backend Setup
+### 2. Backend Installation & Run
 ```bash
-cd Frontend/api
+# Navigate to Backend folder
+cd Backend
+
+# Install dependencies
 pip install -r requirements.txt
-python app.py
-```
-*Wait for: `Running on http://127.0.0.1:5000`*
 
-#### 2. Frontend Setup
+# Start the server
+python main.py
+```
+*The backend will be available at `http://localhost:5000`.*
+
+### 3. Frontend Installation & Run
 ```bash
+# Navigate to Frontend folder
 cd Frontend
+
+# Install dependencies
 npm install
+
+# Start the dev server
 npm run dev
 ```
-*Wait for: `Local: http://localhost:5173/`*
+*The application will open at `http://localhost:5173`.*
 
 ---
 
-## ⌨️ Command Reference
+## 🔑 API Configuration (OpenRouter)
 
-| Context | Command | Description |
-| :--- | :--- | :--- |
-| **Python** | `pip install -r requirements.txt` | Install backend dependencies |
-| **Python** | `python app.py` | Start the Flask development server |
-| **Node.js** | `npm install` | Install frontend dependencies |
-| **Node.js** | `npm run dev` | Start the Vite development server |
-| **Node.js** | `npm run build` | Build the application for production |
+The RAG Chatbot requires an API key from [OpenRouter](https://openrouter.ai/).
+
+1. Create a file named `.env` in the `Backend/` directory.
+2. Add your key:
+   ```env
+   OPENROUTER_API_KEY=your_key_here
+   ```
+3. Restart the Python backend to apply the key.
+
+*Note: The system is optimized for `gpt-4o-mini`. Ensure your OpenRouter account has credits.*
 
 ---
 
@@ -79,23 +80,38 @@ npm run dev
 
 ```text
 Datalens/
-├── Backend/          # Core backend logic and services
-├── Frontend/         # React Application
-│   ├── api/          # Python API Engine (Flask)
-│   ├── src/          # Source code (Components, Assets)
-│   └── package.json  # Frontend configuration
-├── .gitignore        # Git exclusion rules
-├── README.md         # Project documentation
-└── start-datalens.bat # Win-start script
+├── Backend/               # Python FastAPI Services
+│   ├── rag/               # VectorDB & LLM Logic
+│   ├── routes/            # API Endpoints (Clean, Upload, Visualize)
+│   ├── services/          # Core Business Logic
+│   └── .env               # API Configuration (Git Ignored)
+├── Frontend/              # React Application
+│   ├── src/
+│   │   ├── components/    # UI Components (Sheet, Panels, Chat)
+│   │   └── App.jsx        # Main Application Logic
+│   └── index.css          # Premium Design System
+├── requirements.txt       # Global Requirements
+└── README.md              # Documentation
 ```
+
+---
+
+## 🏗️ Deployment to GitHub
+
+When uploading this project to GitHub, ensure the following are included:
+- All source files in `Backend/` and `Frontend/`.
+- The `index.css` file (contains the entire design system).
+- `requirements.txt` and `package.json`.
+
+**Mirroring Security**: Never upload your `.env` file containing your API key.
 
 ---
 
 ## ❓ Troubleshooting
 
-- **Python not found**: Re-install Python and ensure "Add to PATH" is selected.
-- **Port Conflict**: If port 5173 or 5000 is in use, stop other services or change configuration in `vite.config.js` or `app.py`.
-- **Module missing**: Run `npm install` or `pip install` again to ensure all packages are synchronized.
+- **"TypeError: Failed to fetch"**: Check if the Python backend is running.
+- **"Afford 400 tokens / Requested 500"**: OpenRouter credit limit reached. The system is currently set to a 300-token limit in `llm.py` to maximize availability.
+- **Excel View doesn't show data**: Ensure the CSV uploaded is a valid comma-separated file.
 
 ---
-*Built with ❤️ for Data Engineering excellence.*
+*Built for Data Scientists and Engineers who demand a premium UI for data preparation.*

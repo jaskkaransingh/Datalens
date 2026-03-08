@@ -1,0 +1,5 @@
+Age,Salary,Department
+25,50000,IT
+30,null,HR
+null,60000,IT
+45,80000,null

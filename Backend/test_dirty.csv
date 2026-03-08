@@ -1,0 +1,6 @@
+EmployeeID,Age,Salary,Department
+1,25,50000,IT
+2,30,,HR
+3,,60000,IT
+4,45,80000,
+5,28,null,HR

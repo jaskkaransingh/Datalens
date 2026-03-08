@@ -29,7 +29,7 @@ User Question:
 
         body = {
             "model": "openai/gpt-4o-mini",
-            "max_tokens": 500,
+            "max_tokens": 300,
             "messages": [
                 {"role": "user", "content": prompt}
             ]

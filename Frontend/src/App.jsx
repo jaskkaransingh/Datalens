@@ -21,6 +21,10 @@ export default function App() {
     const [activeTab, setActiveTab] = useState('Clean');
     const [chatMessage, setChatMessage] = useState('');
     const [showRag, setShowRag] = useState(true);
+    const [chatHistory, setChatHistory] = useState([
+        { role: 'assistant', content: 'Hello! I am connected to your RAG backend. You can ask me to analyze the structural properties of your dataset or find correlations.' }
+    ]);
+    const [isChatLoading, setIsChatLoading] = useState(false);
 
     // History for Undo
     const [history, setHistory] = useState([]); // Array of dataset versions
@@ -58,8 +62,8 @@ export default function App() {
             if (result.error) throw new Error(result.error);
 
             const newDataset = result.preview || [];
-            const newCols = result.columns || [];
-            const newVisCols = newCols ? Object.fromEntries(newCols.map(c => [c, true])) : {};
+            const newCols = Array.isArray(result.columns) ? result.columns : [];
+            const newVisCols = newCols.length > 0 ? Object.fromEntries(newCols.map(c => [c, true])) : {};
 
             setDataset(newDataset);
             setColumns(newCols);
@@ -135,7 +139,39 @@ export default function App() {
             setValidationRules(fileData.validationRules || {});
             setActiveFileName(fileName);
             setHistory([]); // Reset history for new context
+            setChatHistory([{ role: 'assistant', content: `Switched to ${fileName}. How can I assist you with this dataset?` }]);
         }
+    };
+
+    const handleSendMessage = async () => {
+        if (!chatMessage.trim()) return;
+
+        const userMsg = chatMessage.trim();
+        setChatMessage('');
+        setChatHistory(prev => [...prev, { role: 'user', content: userMsg }]);
+        setIsChatLoading(true);
+
+        try {
+            // Ensure this points to the FastAPI backend port. If you run FastAPI on 5000, keep API_BASE.
+            // If main.py runs on 8000 in your setup, you'll need to change API_BASE. Assume API_BASE for now.
+            const url = `${API_BASE}/ask?question=${encodeURIComponent(userMsg)}${activeFileName ? `&dataset=${encodeURIComponent(activeFileName)}` : ''}`;
+            const resp = await fetch(url);
+
+            if (!resp.ok) throw new Error("Failed to get response");
+
+            const data = await resp.json();
+            setChatHistory(prev => [...prev, { role: 'assistant', content: data.response }]);
+
+        } catch (error) {
+            console.error("Chat error:", error);
+            setChatHistory(prev => [...prev, { role: 'assistant', content: "Sorry, I am having trouble connecting to the backend. Please ensure the Python server (main.py) is running." }]);
+        } finally {
+            setIsChatLoading(false);
+        }
+    };
+
+    const handleClearChat = () => {
+        setChatHistory([{ role: 'assistant', content: 'Chat history cleared. How can I help you today?' }]);
     };
 
     // Wrapper for dataset updates to track history
@@ -304,7 +340,7 @@ export default function App() {
                 <div style={{ display: 'flex', padding: '14px 32px', gap: '24px', borderBottom: '1px solid rgba(103,111,157,0.25)', background: 'rgba(66,71,105,0.85)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', alignItems: 'center' }}>
                     {/* Tabs */}
                     <div style={{ display: 'flex', gap: '12px' }}>
-                        {['Clean', 'Visualize', 'Validate'].map(tab => (
+                        {['Clean', 'Validate', 'Visualize'].map(tab => (
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
@@ -329,6 +365,7 @@ export default function App() {
                     {/* Horizontal Editing Panel */}
                     <div style={{ flex: 1, background: 'rgba(45,50,80,0.90)', borderRadius: '12px', padding: '12px 24px', border: '1px solid rgba(103,111,157,0.25)', overflowX: 'auto', minWidth: 0 }}>
                         <EditingPanel
+                            activeFileName={activeFileName}
                             activeTab={activeTab}
                             columns={columns}
                             dataset={dataset}
@@ -414,6 +451,28 @@ export default function App() {
                         <h2 style={{ fontSize: '1.4rem', margin: 0, fontFamily: 'Outfit', fontWeight: '800', color: '#ffffff', letterSpacing: '-0.5px' }}>RAG</h2>
                         <p style={{ fontSize: '0.8rem', color: 'rgba(103,111,157,0.9)', margin: '2px 0 0 0', fontWeight: '600' }}>AI Assistant</p>
                     </div>
+
+                    {/* Clear Chat Button */}
+                    <button
+                        onClick={handleClearChat}
+                        title="Clear Chat"
+                        style={{
+                            background: 'transparent',
+                            border: '1px solid rgba(103,111,157,0.3)',
+                            cursor: 'pointer',
+                            color: '#f9b17a',
+                            padding: '6px',
+                            marginRight: '8px',
+                            borderRadius: '6px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            transition: 'all 0.2s',
+                        }}
+                    >
+                        <RefreshCw size={14} />
+                    </button>
+
                     <button
                         onClick={() => setShowRag(false)}
                         style={{
@@ -427,7 +486,6 @@ export default function App() {
                             alignItems: 'center',
                             justifyContent: 'center',
                             transition: 'all 0.2s',
-                            hover: { backgroundColor: 'var(--alice-blue)' }
                         }}
                     >
                         <RefreshCw size={18} style={{ transform: 'rotate(45deg)' }} />
@@ -436,16 +494,28 @@ export default function App() {
 
                 {/* Chat Messages */}
                 <div style={{ flex: 1, padding: '24px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '24px', backgroundColor: 'rgba(30,34,64,0.50)' }}>
-
-                    {/* Bot Message */}
-                    <div style={{ alignSelf: 'flex-start', backgroundColor: 'rgba(66,71,105,0.80)', border: '1px solid rgba(103,111,157,0.25)', padding: '16px 20px', borderRadius: '4px 20px 20px 20px', maxWidth: '90%', fontSize: '0.95rem', color: '#ffffff', lineHeight: '1.6', fontWeight: '500' }}>
-                        Hello! I am connected to your RAG backend. You can ask me to analyze the structural properties of your dataset or find correlations.
-                    </div>
-
-                    {/* User Message (Example) */}
-                    <div style={{ alignSelf: 'flex-end', backgroundColor: '#f9b17a', color: '#2d3250', padding: '16px 20px', borderRadius: '20px 4px 20px 20px', maxWidth: '90%', fontSize: '0.95rem', lineHeight: '1.6', fontWeight: '700' }}>
-                        What are the key insights from the sales column?
-                    </div>
+                    {chatHistory.map((msg, idx) => (
+                        <div key={idx} style={{
+                            alignSelf: msg.role === 'assistant' ? 'flex-start' : 'flex-end',
+                            backgroundColor: msg.role === 'assistant' ? 'rgba(66,71,105,0.80)' : '#f9b17a',
+                            color: msg.role === 'assistant' ? '#ffffff' : '#2d3250',
+                            border: msg.role === 'assistant' ? '1px solid rgba(103,111,157,0.25)' : 'none',
+                            padding: '16px 20px',
+                            borderRadius: msg.role === 'assistant' ? '4px 20px 20px 20px' : '20px 4px 20px 20px',
+                            maxWidth: '90%',
+                            fontSize: '0.95rem',
+                            lineHeight: '1.6',
+                            fontWeight: msg.role === 'assistant' ? '500' : '700',
+                            whiteSpace: 'pre-wrap'
+                        }}>
+                            {msg.content}
+                        </div>
+                    ))}
+                    {isChatLoading && (
+                        <div style={{ alignSelf: 'flex-start', padding: '16px 20px', color: '#f9b17a', fontSize: '0.85rem' }}>
+                            Thinking...
+                        </div>
+                    )}
                 </div>
 
                 {/* Chat Input */}
@@ -456,9 +526,18 @@ export default function App() {
                             placeholder="Ask the RAG..."
                             value={chatMessage}
                             onChange={(e) => setChatMessage(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    handleSendMessage();
+                                }
+                            }}
                             style={{ flex: 1, padding: '12px 16px', border: 'none', backgroundColor: 'transparent', outline: 'none', fontSize: '0.95rem', color: '#ffffff', fontWeight: '500' }}
+                            disabled={isChatLoading}
                         />
-                        <button style={{ width: '48px', height: '48px', backgroundColor: '#2d3250', color: '#f9b17a', border: 'none', borderRadius: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s', opacity: chatMessage ? 1 : 0.8, boxShadow: '0 4px 16px rgba(0,0,0,0.4)' }}>
+                        <button
+                            onClick={handleSendMessage}
+                            disabled={isChatLoading || !chatMessage.trim()}
+                            style={{ width: '48px', height: '48px', backgroundColor: '#2d3250', color: '#f9b17a', border: 'none', borderRadius: '12px', cursor: (isChatLoading || !chatMessage.trim()) ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s', opacity: (chatMessage && !isChatLoading) ? 1 : 0.6, boxShadow: '0 4px 16px rgba(0,0,0,0.4)' }}>
                             <Send size={20} />
                         </button>
                     </div>
