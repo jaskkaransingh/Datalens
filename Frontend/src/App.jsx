@@ -202,6 +202,48 @@ export default function App() {
         alert("Changes Saved! History cleared.");
     };
 
+    const handleExport = (type) => {
+        if (!dataset || dataset.length === 0) {
+            alert("No data available to export.");
+            return;
+        }
+
+        let content = '';
+        let mime = '';
+        let ext = '';
+        const exportName = activeFileName ? activeFileName.split('.')[0] : 'datalens_export';
+
+        if (type === 'csv') {
+            const escapeCSV = (val) => {
+                if (val === null || val === undefined) return '';
+                const str = String(val);
+                if (str.includes(',') || str.includes('\n') || str.includes('"')) {
+                    return '"' + str.replace(/"/g, '""') + '"';
+                }
+                return str;
+            };
+            const headers = columns.join(',');
+            const rows = dataset.map(row => columns.map(c => escapeCSV(row[c])).join(',')).join('\n');
+            content = headers + '\n' + rows;
+            mime = 'text/csv';
+            ext = 'csv';
+        } else {
+            content = JSON.stringify(dataset, null, 2);
+            mime = 'application/json';
+            ext = 'json';
+        }
+
+        const blob = new Blob([content], { type: mime });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${exportName}_edited.${ext}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    };
+
     return (
         <div style={{
             display: 'grid',
@@ -339,7 +381,7 @@ export default function App() {
 
                 {/* Export Footer */}
                 <div style={{ padding: '24px', borderTop: '1px solid rgba(103,111,157,0.15)' }}>
-                    <button style={{ width: '100%', padding: '15px', background: 'linear-gradient(135deg, #f9b17a 0%, #e8965a 100%)', color: '#0B132B', borderRadius: '12px', border: 'none', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', fontWeight: '800', fontSize: '1rem', transition: 'all 0.3s', boxShadow: '0 10px 25px -5px rgba(249,177,122,0.4)' }}>
+                    <button onClick={() => handleExport('csv')} disabled={dataset.length === 0} style={{ width: '100%', padding: '15px', background: 'linear-gradient(135deg, #f9b17a 0%, #e8965a 100%)', color: '#0B132B', borderRadius: '12px', border: 'none', cursor: dataset.length === 0 ? 'not-allowed' : 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', fontWeight: '800', fontSize: '1rem', transition: 'all 0.3s', boxShadow: '0 10px 25px -5px rgba(249,177,122,0.4)', opacity: dataset.length === 0 ? 0.5 : 1 }}>
                         <Download size={20} /> Export
                     </button>
                 </div>
