@@ -48,7 +48,7 @@ need to change the API key.
 Location: Backend/.env
 
 Current Setting:
-OPENROUTER_API_KEY=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
+OPENROUTER_API_KEY= get it from https://openrouter.ai/
 
 How to change:
 1. Go to https://openrouter.ai/settings/credits
